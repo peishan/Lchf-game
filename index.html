@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>⚔️ Keto Quest — LCHF RPG Tracker</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=MedievalSharp&family=Cinzel:wght@400;700;900&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap');
+
+  :root {
+    --night: #0d0f1a;
+    --deep: #131627;
+    --panel: #1a1d2e;
+    --card: #1f2235;
+    --border: #2e3250;
+    --glow: #3d4275;
+    --gold: #c8952a;
+    --gold-l: #f0c060;
+    --green: #2d7a3a;
+    --green-l: #4aad5a;
+    --green-dim: #1a3d22;
+    --red: #9b2335;
+    --red-l: #d4455a;
+    --blue: #2255aa;
+    --blue-l: #4488dd;
+    --purple: #6b3fa0;
+    --purple-l: #a070d0;
+    --cream: #e8d8b0;
+    --muted: #7a80a8;
+    --text: #d0d8f0;
+    --fat-c: #c8952a;
+    --prot-c: #4aad5a;
+    --carb-c: #d4455a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--night);
+    color: var(--text);
+    font-family: 'Crimson Pro', Georgia, serif;
+    min-height: 100vh;
+    background-image: radial-gradient(ellipse at 20% 20%, #1a1040 0%, transparent 50%),
+                      radial-gradient(ellipse at 80% 80%, #0a1a10 0%, transparent 50%);
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(180deg, #0a0c18 0%, var(--panel) 100%);
+    border-bottom: 2px solid var(--gold);
+    padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 4px 20px rgba(200,149,42,0.2);
+  }
+  .header-title {
+    font-family: 'Cinzel', serif;
+    font-size: 22px; font-weight: 900;
+    color: var(--gold-l);
+    letter-spacing: 0.04em;
+    text-shadow: 0 0 20px rgba(200,149,42,0.5);
+  }
+  .header-sub { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* ── TABS ── */
+  .tabs { display: flex; gap: 4px; padding: 12px 16px; background: var(--deep); border-bottom: 1px solid var(--border); overflow-x: auto; }
+  .tab { padding: 7px 14px; border-radius: 6px; border: 1px solid var(--border); font-family: 'Cinzel', serif;
+    font-size: 11px; cursor: pointer; background: var(--panel); color: var(--muted); white-space: nowrap;
+    transition: all 0.15s; letter-spacing: 0.05em; }
+  .tab.active { background: var(--gold); color: #000; border-color: var(--gold-l); font-weight: 700; }
+  .tab:hover:not(.active) { border-color: var(--gold); color: var(--cream); }
+
+  /* ── LAYOUT ── */
+  .main { max-width: 900px; margin: 0 auto; padding: 16px; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── PANELS ── */
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .panel::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .panel-title {
+    font-family: 'Cinzel', serif; font-size: 13px; font-weight: 700;
+    color: var(--gold); margin-bottom: 12px; letter-spacing: 0.06em;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  /* ── STAT BARS ── */
+  .stat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .stat-label { width: 75px; font-size: 12px; color: var(--muted); letter-spacing: 0.04em; flex-shrink: 0; }
+  .stat-bar-wrap { flex: 1; height: 14px; background: var(--deep); border-radius: 7px; overflow: hidden; border: 1px solid var(--border); }
+  .stat-bar { height: 100%; border-radius: 7px; transition: width 0.4s ease; }
+  .stat-val { width: 55px; font-size: 12px; color: var(--cream); text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* ── HP / XP BARS ── */
+  .hero-bars { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .hbar { background: var(--deep); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; }
+  .hbar-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+  .hbar-track { height: 12px; background: #111; border-radius: 6px; overflow: hidden; }
+  .hbar-fill { height: 100%; border-radius: 6px; transition: width 0.5s; }
+  .hbar-val { font-size: 12px; color: var(--cream); margin-top: 3px; font-variant-numeric: tabular-nums; }
+
+  /* ── MACROS SUMMARY ── */
+  .macro-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  .macro-card {
+    background: var(--deep); border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px; text-align: center;
+  }
+  .macro-card .mc-val { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .macro-card .mc-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
+
+  /* ── INPUTS ── */
+  input[type=text], input[type=number], select, textarea {
+    background: var(--deep); border: 1.5px solid var(--border); border-radius: 7px;
+    color: var(--cream); font-family: 'Crimson Pro', serif; font-size: 15px;
+    padding: 8px 12px; outline: none; width: 100%;
+    transition: border-color 0.15s;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--gold); }
+  .field-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+  .field { margin-bottom: 10px; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    padding: 10px 18px; border: none; border-radius: 8px; cursor: pointer;
+    font-family: 'Cinzel', serif; font-size: 12px; font-weight: 700;
+    letter-spacing: 0.06em; transition: all 0.15s;
+  }
+  .btn-gold { background: var(--gold); color: #000; }
+  .btn-gold:hover { background: var(--gold-l); }
+  .btn-green { background: var(--green); color: #fff; }
+  .btn-green:hover { background: var(--green-l); }
+  .btn-red { background: var(--red); color: #fff; }
+  .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--cream); }
+  .btn-full { width: 100%; margin-top: 6px; padding: 12px; font-size: 13px; }
+
+  /* ── CHARACTER CARDS ── */
+  .party-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+  .char-card {
+    background: var(--deep); border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 10px; text-align: center; transition: border-color 0.2s;
+    position: relative;
+  }
+  .char-card:hover { border-color: var(--gold); }
+  .char-avatar { font-size: 32px; margin-bottom: 6px; }
+  .char-name { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700; color: var(--gold); margin-bottom: 2px; }
+  .char-role { font-size: 11px; color: var(--muted); }
+  .char-power { font-size: 11px; color: var(--green-l); margin-top: 4px; font-style: italic; }
+  .char-badge {
+    position: absolute; top: 6px; right: 6px;
+    background: var(--purple); color: #fff; font-size: 9px;
+    padding: 2px 5px; border-radius: 4px; font-family: 'Cinzel', serif;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── MEAL ENTRIES ── */
+  .meal-entry {
+    background: var(--deep); border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: flex-start;
+  }
+  .meal-name { font-size: 14px; color: var(--cream); margin-bottom: 4px; }
+  .meal-macros { display: flex; gap: 10px; font-size: 12px; }
+  .meal-macros span { display: flex; align-items: center; gap: 3px; }
+  .rm-btn { background: none; border: none; color: var(--red-l); cursor: pointer; font-size: 18px; line-height: 1; padding: 0 2px; }
+
+  /* ── QUEST LOG ── */
+  .quest-entry {
+    border-left: 3px solid var(--gold); padding: 8px 12px; margin-bottom: 8px;
+    background: var(--deep); border-radius: 0 8px 8px 0;
+  }
+  .quest-date { font-size: 11px; color: var(--muted); margin-bottom: 3px; }
+  .quest-result { font-size: 13px; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-family: 'Cinzel', serif; letter-spacing: 0.04em; margin-left: 6px; }
+  .badge-win { background: var(--green-dim); color: var(--green-l); border: 1px solid var(--green); }
+  .badge-loss { background: #2a1018; color: var(--red-l); border: 1px solid var(--red); }
+  .badge-ok { background: #2a2010; color: var(--gold); border: 1px solid var(--gold); }
+
+  /* ── DIALOGUE BOX ── */
+  .dialogue {
+    background: var(--deep); border: 2px solid var(--gold); border-radius: 10px;
+    padding: 14px 16px; margin: 12px 0; position: relative;
+    box-shadow: 0 0 20px rgba(200,149,42,0.15);
+  }
+  .dialogue-speaker { font-family: 'Cinzel', serif; font-size: 12px; color: var(--gold); margin-bottom: 6px; font-weight: 700; }
+  .dialogue-text { font-size: 14px; color: var(--cream); font-style: italic; line-height: 1.5; }
+  .dialogue-avatar { font-size: 24px; position: absolute; top: -14px; left: 12px; background: var(--deep); padding: 0 4px; }
+
+  /* ── CARB METER ── */
+  .carb-meter { margin: 10px 0; }
+  .carb-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 5px; }
+  .carb-track { height: 20px; background: var(--deep); border-radius: 10px; border: 1px solid var(--border); overflow: hidden; }
+  .carb-fill { height: 100%; border-radius: 10px; transition: width 0.5s, background 0.3s; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; font-size: 11px; font-weight: 700; color: #fff; }
+
+  /* ── SCROLL DECORATION ── */
+  .scroll-header {
+    text-align: center; padding: 10px;
+    font-family: 'Cinzel', serif; font-size: 11px; color: var(--muted);
+    letter-spacing: 0.12em; text-transform: uppercase;
+    border-bottom: 1px solid var(--border); margin-bottom: 14px;
+  }
+  .scroll-header::before, .scroll-header::after { content: '⸻ '; color: var(--gold); }
+
+  /* ── EVENT TICKER ── */
+  .event-ticker {
+    background: #0a0c18; border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 12px; font-size: 13px; color: var(--cream);
+    max-height: 120px; overflow-y: auto; margin-top: 10px;
+  }
+  .event-line { padding: 2px 0; border-bottom: 1px solid #1a1d2e; }
+  .event-line:last-child { border: none; }
+  .ev-good { color: var(--green-l); }
+  .ev-warn { color: var(--gold); }
+  .ev-bad { color: var(--red-l); }
+  .ev-info { color: var(--blue-l); }
+
+  /* ── TOOLTIP ── */
+  .tip { font-size: 11px; color: var(--muted); font-style: italic; margin-top: 4px; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .macro-grid { grid-template-columns: 1fr 1fr; }
+    .field-row { grid-template-columns: 1fr 1fr; }
+    .party-grid { grid-template-columns: repeat(3, 1fr); }
+    .hero-bars { grid-template-columns: 1fr; }
+  }
+
+  .glow-gold { text-shadow: 0 0 12px rgba(200,149,42,0.7); }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+  .flex-row { display: flex; gap: 8px; align-items: center; }
+  .mt8 { margin-top: 8px; }
+  .small { font-size: 12px; color: var(--muted); }
+
+  /* Stars */
+  .stars { color: var(--gold); letter-spacing: 2px; }
+
+  /* Level badge */
+  .level-badge {
+    background: linear-gradient(135deg, var(--gold), var(--gold-l));
+    color: #000; font-family: 'Cinzel', serif; font-weight: 900;
+    font-size: 13px; padding: 4px 12px; border-radius: 20px;
+    display: inline-block;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-sub">⚔️ The Realm of Ketosis</div>
+    <div class="header-title">KETO QUEST</div>
+  </div>
+  <div style="text-align:right">
+    <div class="level-badge" id="levelBadge">Lv.1</div>
+    <div class="small" style="margin-top:4px" id="heroTitle">Fat Apprentice</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('dungeon')">⚔️ Daily Dungeon</button>
+  <button class="tab" onclick="showTab('party')">🧙 Party</button>
+  <button class="tab" onclick="showTab('log')">📜 Quest Log</button>
+  <button class="tab" onclick="showTab('stats')">📊 Stats</button>
+</div>
+
+  <!-- Save/Load Bar -->
+  <div style="background:var(--deep);border-bottom:1px solid var(--border);padding:8px 16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <span style="font-size:11px;color:var(--muted);font-family:'Cinzel',serif;letter-spacing:0.06em;flex-shrink:0">💾 SAVE DATA</span>
+    <button class="btn btn-gold" style="padding:6px 14px;font-size:11px" onclick="exportSave()">⬇️ Export Save File</button>
+    <label class="btn btn-ghost" style="padding:6px 14px;font-size:11px;cursor:pointer">
+      ⬆️ Import Save File
+      <input type="file" accept=".json" onchange="importSave(event)" style="display:none"/>
+    </label>
+    <span style="font-size:11px;color:var(--muted)" id="lastSavedLabel">Auto-saves to browser storage</span>
+  </div>
+
+<div class="main">
+
+  <!-- ══════════════════════════════════ -->
+  <!-- DAILY DUNGEON TAB                 -->
+  <!-- ══════════════════════════════════ -->
+  <div id="tab-dungeon" class="screen active">
+    <div class="scroll-header" id="dungeonDay">Day 31 — The Dungeon Awaits</div>
+
+    <!-- Hero Status -->
+    <div class="panel">
+      <div class="panel-title">⚔️ Hero Status</div>
+      <div class="hero-bars">
+        <div class="hbar">
+          <div class="hbar-label">❤️ HP — Vitality</div>
+          <div class="hbar-track"><div class="hbar-fill" id="hpBar" style="width:80%;background:linear-gradient(90deg,#9b2335,#d4455a)"></div></div>
+          <div class="hbar-val" id="hpVal">80 / 100</div>
+        </div>
+        <div class="hbar">
+          <div class="hbar-label">⭐ XP — Keto Mastery</div>
+          <div class="hbar-track"><div class="hbar-fill" id="xpBar" style="width:0%;background:linear-gradient(90deg,#2255aa,#4488dd)"></div></div>
+          <div class="hbar-val" id="xpVal">0 / 100 XP</div>
+        </div>
+        <div class="hbar">
+          <div class="hbar-label">🔥 Fat Burn Aura</div>
+          <div class="hbar-track"><div class="hbar-fill" id="fatAuraBar" style="width:0%;background:linear-gradient(90deg,#c8952a,#f0c060)"></div></div>
+          <div class="hbar-val" id="fatAuraVal">0%</div>
+        </div>
+        <div class="hbar">
+          <div class="hbar-label">💧 Hydration Shield</div>
+          <div class="hbar-track"><div class="hbar-fill" id="waterBar" style="width:0%;background:linear-gradient(90deg,#2255aa,#60b0ff)"></div></div>
+          <div class="hbar-val" id="waterVal">0 / 3.0 L</div>
+        </div>
+      </div>
+
+      <!-- Macro summary cards -->
+      <div class="macro-grid">
+        <div class="macro-card">
+          <div class="mc-val" style="color:var(--fat-c)" id="totalFat">0g</div>
+          <div class="mc-label">🟡 Fat</div>
+        </div>
+        <div class="macro-card">
+          <div class="mc-val" style="color:var(--prot-c)" id="totalProtein">0g</div>
+          <div class="mc-label">🟢 Protein</div>
+        </div>
+        <div class="macro-card">
+          <div class="mc-val" style="color:var(--carb-c)" id="totalCarbs">0g</div>
+          <div class="mc-label">🔴 Carbs</div>
+        </div>
+        <div class="macro-card">
+          <div class="mc-val" style="color:var(--gold-l)" id="totalCals">0</div>
+          <div class="mc-label">🔥 kcal</div>
+        </div>
+      </div>
+
+      <!-- Carb meter -->
+      <div class="carb-meter">
+        <div class="carb-label">
+          <span>🛡️ Carb Gate (Target ≤20g)</span>
+          <span id="carbStatus">Safe Zone</span>
+        </div>
+        <div class="carb-track">
+          <div class="carb-fill" id="carbMeter" style="width:0%;background:var(--green)">0g</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gatekeeper Dialogue -->
+    <div class="dialogue" id="gatekeeperBox">
+      <div class="dialogue-avatar">👑</div>
+      <div class="dialogue-speaker">The Gatekeepers (Ayah & Mama)</div>
+      <div class="dialogue-text" id="gatekeeperText">"The gates of Ketosis are open, warrior. Log your first meal and prove your worth. We are watching."</div>
+    </div>
+
+    <!-- Meal Library -->
+    <div class="panel">
+      <div class="panel-title">📚 Quick-Add — Common LCHF Foods</div>
+      <div class="tip" style="margin-bottom:10px">Tap any food to auto-fill the meal form. Mix and match!</div>
+      <div id="foodLibrary" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+      <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
+        <div class="field-label" style="width:100%;margin-bottom:4px">🥗 Build a combo — selected items:</div>
+        <div id="comboList" style="font-size:12px;color:var(--cream);width:100%;min-height:20px"></div>
+        <button class="btn btn-green" style="margin-top:6px" onclick="addComboMeal()">➕ Add Combo as One Meal</button>
+        <button class="btn btn-ghost" style="margin-top:6px" onclick="clearCombo()">✕ Clear</button>
+      </div>
+    </div>
+
+
+    <!-- Idle Adventure Board -->
+    <div class="panel">
+      <div class="panel-title">🗺️ Idle Adventure Board</div>
+      <div class="tip" style="margin-bottom:10px">Send a party member off while you're away. They'll return with news and rewards next time you open the game!</div>
+      <div id="idlePartyAvailable" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px"></div>
+      <div id="idleActiveQuests"></div>
+    </div>
+
+    <!-- Log a Meal -->
+    <div class="panel">
+      <div class="panel-title">🍽️ Log a Meal — Claim Your Loot</div>
+      <div class="field">
+        <div class="field-label">Meal Name</div>
+        <input type="text" id="mealName" placeholder="e.g. Eggs & butter, Ayam penyet, Sardines…"/>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <div class="field-label" style="color:var(--fat-c)">🟡 Fat (g)</div>
+          <input type="number" id="mFat" placeholder="0" min="0"/>
+        </div>
+        <div class="field">
+          <div class="field-label" style="color:var(--prot-c)">🟢 Protein (g)</div>
+          <input type="number" id="mProtein" placeholder="0" min="0"/>
+        </div>
+        <div class="field">
+          <div class="field-label" style="color:var(--carb-c)">🔴 Net Carbs (g)</div>
+          <input type="number" id="mCarbs" placeholder="0" min="0"/>
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-label">💧 Water (L total today)</div>
+        <input type="number" id="mWater" placeholder="e.g. 1.5" step="0.1" min="0" max="5"/>
+      </div>
+      <button class="btn btn-gold btn-full" onclick="addMeal()">⚔️ Add Meal to Log</button>
+
+      <!-- Logged meals -->
+      <div id="mealList" style="margin-top:12px"></div>
+    </div>
+
+    <!-- Party Reactions -->
+    <div class="panel" id="partyReactPanel" style="display:none">
+      <div class="panel-title">🧙 Party Reactions</div>
+      <div id="partyReactions"></div>
+    </div>
+
+    <!-- Complete Day -->
+    <div class="panel">
+      <div class="panel-title">🏰 Complete Today's Quest</div>
+      <div class="field">
+        <div class="field-label">⚖️ Weight Today (kg) — optional</div>
+        <input type="number" id="todayWeight" placeholder="e.g. 88.2" step="0.1"/>
+      </div>
+      <div class="field">
+        <div class="field-label">Energy Level</div>
+        <select id="todayEnergy">
+          <option value="">— Select —</option>
+          <option value="1">😴 1 — Exhausted</option>
+          <option value="2">😕 2 — Low</option>
+          <option value="3">😐 3 — Okay</option>
+          <option value="4">🙂 4 — Good</option>
+          <option value="5">⚡ 5 — Energised</option>
+        </select>
+      </div>
+      <button class="btn btn-gold btn-full" onclick="completeDay()">🏆 Submit to the Gatekeepers</button>
+      <div class="tip" style="text-align:center;margin-top:6px">Your parents will judge your macros and award XP</div>
+    </div>
+
+    <!-- Event Log -->
+    <div class="panel">
+      <div class="panel-title">📜 Battle Log</div>
+      <div class="event-ticker" id="eventLog">
+        <div class="event-line ev-info">⚔️ A new dungeon day begins. Log your meals to power up!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════ -->
+  <!-- PARTY TAB                         -->
+  <!-- ══════════════════════════════════ -->
+  <div id="tab-party" class="screen">
+    <div class="scroll-header">Your Fellowship</div>
+
+    <div class="party-grid">
+      <!-- Hero: San -->
+      <div class="char-card" style="border-color:var(--gold)">
+        <div class="char-badge">HERO</div>
+        <div class="char-avatar">⚔️</div>
+        <div class="char-name">San</div>
+        <div class="char-role">Keto Warrior</div>
+        <div class="char-power">Fat Burn Aura · LCHF Master</div>
+      </div>
+
+      <!-- Soel -->
+      <div class="char-card" style="border-color:var(--purple-l)">
+        <div class="char-badge" style="background:var(--purple)">FAMILIAR</div>
+        <div class="char-avatar">🐱</div>
+        <div class="char-name">Soel</div>
+        <div class="char-role">Grey & White Kitty</div>
+        <div class="char-power">"Purr Buff" — +5 XP on clean days · Good Boy Energy</div>
+      </div>
+
+
+      <!-- Joel -->
+      <div class="char-card" style="border-color:var(--gold-l)">
+        <div class="char-badge" style="background:linear-gradient(135deg,var(--gold),var(--purple));color:#fff">PARTNER</div>
+        <div class="char-avatar">🛡️</div>
+        <div class="char-name">Joel</div>
+        <div class="char-role">Paladin · Guardian</div>
+        <div class="char-power">"Anchor Aura" — steady +10 HP baseline. Your unwavering shield.</div>
+      </div>
+
+      <!-- Mimi -->
+      <div class="char-card">
+        <div class="char-badge" style="background:var(--blue)">ALLY</div>
+        <div class="char-avatar">🌸</div>
+        <div class="char-name">Mimi</div>
+        <div class="char-role">Coworker · Motivator</div>
+        <div class="char-power">"Cheer Spell" — +10 HP on good protein days</div>
+      </div>
+
+      <!-- Aisy -->
+      <div class="char-card">
+        <div class="char-badge" style="background:var(--blue)">ALLY</div>
+        <div class="char-avatar">✨</div>
+        <div class="char-name">Aisy</div>
+        <div class="char-role">Coworker · Strategist</div>
+        <div class="char-power">"Macro Eye" — detects hidden carbs in meals</div>
+      </div>
+
+      <!-- Mum - Gatekeeper -->
+      <div class="char-card" style="border-color:var(--gold)">
+        <div class="char-badge" style="background:var(--gold);color:#000">KEEPER</div>
+        <div class="char-avatar">👑</div>
+        <div class="char-name">Mama</div>
+        <div class="char-role">Gatekeeper of Ketosis</div>
+        <div class="char-power">"Veggie Blessing" — judges fat ratio. Strict but fair.</div>
+      </div>
+
+      <!-- Dad - Gatekeeper -->
+      <div class="char-card" style="border-color:var(--gold)">
+        <div class="char-badge" style="background:var(--gold);color:#000">KEEPER</div>
+        <div class="char-avatar">🛡️</div>
+        <div class="char-name">Ayah</div>
+        <div class="char-role">Guardian of the Gate</div>
+        <div class="char-power">"Salt Protocol" — guards your BP. Silent but mighty.</div>
+      </div>
+
+      <!-- Aisyah - Merchant -->
+      <div class="char-card" style="border-color:var(--green-l)">
+        <div class="char-badge" style="background:var(--green)">MERCHANT</div>
+        <div class="char-avatar">🏪</div>
+        <div class="char-name">Aisyah</div>
+        <div class="char-role">The Merchant</div>
+        <div class="char-power">"Bulk Deal" — unlocks LCHF food combos at high streaks</div>
+      </div>
+
+      <!-- Mezstorm - Supplier -->
+      <div class="char-card" style="border-color:var(--green-l)">
+        <div class="char-badge" style="background:var(--green)">SUPPLIER</div>
+        <div class="char-avatar">🌿</div>
+        <div class="char-name">Mezstorm</div>
+        <div class="char-role">The Supplier</div>
+        <div class="char-power">"Herb Cache" — bonus HP when you eat vegetables</div>
+      </div>
+
+      <!-- Eliz - Healer -->
+      <div class="char-card" style="border-color:var(--blue-l)">
+        <div class="char-badge" style="background:var(--blue)">HEALER</div>
+        <div class="char-avatar">💊</div>
+        <div class="char-name">Eliz</div>
+        <div class="char-role">Healer · Niece</div>
+        <div class="char-power">"Restore Spell" — +15 HP when you hit 3L water</div>
+      </div>
+
+      <!-- Senedra - Healer -->
+      <div class="char-card" style="border-color:var(--blue-l)">
+        <div class="char-badge" style="background:var(--blue)">HEALER</div>
+        <div class="char-avatar">🌟</div>
+        <div class="char-name">Senedra</div>
+        <div class="char-role">Healer · Niece</div>
+        <div class="char-power">"Yogurt Cure" — +10 HP on Sahara Yogurt days</div>
+      </div>
+
+      <!-- Zaki - Inquisitor -->
+      <div class="char-card" style="border-color:var(--red-l)">
+        <div class="char-badge" style="background:var(--red)">INQUISITOR</div>
+        <div class="char-avatar">🔍</div>
+        <div class="char-name">Zaki</div>
+        <div class="char-role">The Inquisitor · Nephew</div>
+        <div class="char-power">"Carb Interrogation" — flags meals over 15g carbs. No mercy.</div>
+      </div>
+    </div>
+
+    <!-- Special Abilities -->
+    <div class="panel" style="margin-top:14px">
+      <div class="panel-title">⚡ Active Party Abilities</div>
+      <div id="partyAbilities">
+        <div class="quest-entry">
+          <div class="quest-date">🛡️ Joel's Anchor Aura</div>
+          <div class="quest-result">As your Paladin partner, Joel passively restores +10 HP at the start of each new day. He doesn't say much — he just shows up.</div>
+        </div>
+        <div class="quest-entry">
+          <div class="quest-date">🐱 Soel's Purr Buff</div>
+          <div class="quest-result">When you complete a day under 20g carbs, Soel purrs and grants +5 XP bonus. Keep her happy!</div>
+        </div>
+        <div class="quest-entry">
+          <div class="quest-date">🔍 Zaki's Interrogation</div>
+          <div class="quest-result">Any single meal over 15g carbs triggers Zaki's inspection. He will demand an explanation and deduct 5 HP.</div>
+        </div>
+        <div class="quest-entry">
+          <div class="quest-date">💊 Eliz's Restore Spell</div>
+          <div class="quest-result">Hit 3.0L water today and Eliz restores 15 HP. She's watching your hydration closely.</div>
+        </div>
+        <div class="quest-entry">
+          <div class="quest-date">🌟 Senedra's Yogurt Cure</div>
+          <div class="quest-result">Log "yogurt" in any meal name and Senedra casts a 10 HP Gut Shield cure.</div>
+        </div>
+        <div class="quest-entry">
+          <div class="quest-date">🌿 Mezstorm's Herb Cache</div>
+          <div class="quest-result">Log a meal with "veg", "vegetable", or "salad" and Mezstorm supplies +8 HP.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════ -->
+  <!-- QUEST LOG TAB                     -->
+  <!-- ══════════════════════════════════ -->
+  <div id="tab-log" class="screen">
+    <div class="scroll-header">Chronicle of Completed Quests</div>
+    <div id="questLogList">
+      <div class="small" style="text-align:center;padding:20px">No completed quests yet. Submit your first day to begin the chronicle.</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════ -->
+  <!-- STATS TAB                         -->
+  <!-- ══════════════════════════════════ -->
+  <div id="tab-stats" class="screen">
+    <div class="scroll-header">Realm Statistics</div>
+
+    <div class="panel">
+      <div class="panel-title">⚖️ Weight Journey</div>
+      <div class="stat-row">
+        <div class="stat-label">Start</div>
+        <div class="stat-bar-wrap"><div class="stat-bar" style="width:100%;background:var(--red)"></div></div>
+        <div class="stat-val">91.0 kg</div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-label">Current</div>
+        <div class="stat-bar-wrap"><div class="stat-bar" id="weightBar" style="width:85%;background:var(--gold)"></div></div>
+        <div class="stat-val" id="weightStat">88.6 kg</div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-label">Target</div>
+        <div class="stat-bar-wrap"><div class="stat-bar" style="width:70%;background:var(--green)"></div></div>
+        <div class="stat-val">70.0 kg</div>
+      </div>
+      <div class="tip" style="margin-top:8px" id="weightProgress">Total lost: 2.4 kg · Remaining: 18.6 kg · Progress: 11.4%</div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">🏆 Achievements</div>
+      <div id="achievementList">
+        <div class="quest-entry">
+          <div class="quest-date">🥇 First Blood</div>
+          <div class="quest-result">Completed Day 1 of the Keto Quest. The journey begins.</div>
+        </div>
+        <div class="quest-entry">
+          <div class="quest-date">⚔️ No Rice Warrior — 30 Days</div>
+          <div class="quest-result">Survived the Great Rice Famine for 30 days. Legendary.</div>
+        </div>
+        <div class="quest-entry">
+          <div class="quest-date">💎 88.2 kg Milestone</div>
+          <div class="quest-result">Reached lowest recorded weight on Day 22. Elite status unlocked.</div>
+        </div>
+        <div class="quest-entry">
+          <div class="quest-date">💧 Hydration Queen</div>
+          <div class="quest-result">Consistently hit 3,000ml. The Realm's rivers flow in your honour.</div>
+        </div>
+        <div class="quest-entry">
+          <div class="quest-date">🐱 Soel's Favourite</div>
+          <div class="quest-result">Earned Soel's Purr Buff 5+ times. He approves of your keto ways.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">📊 All-Time Macro Averages</div>
+      <div class="stat-row">
+        <div class="stat-label">Avg Fat</div>
+        <div class="stat-bar-wrap"><div class="stat-bar" id="avgFatBar" style="width:65%;background:var(--fat-c)"></div></div>
+        <div class="stat-val" id="avgFatVal">—</div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-label">Avg Protein</div>
+        <div class="stat-bar-wrap"><div class="stat-bar" id="avgProtBar" style="width:50%;background:var(--prot-c)"></div></div>
+        <div class="stat-val" id="avgProtVal">—</div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-label">Avg Carbs</div>
+        <div class="stat-bar-wrap"><div class="stat-bar" id="avgCarbBar" style="width:20%;background:var(--carb-c)"></div></div>
+        <div class="stat-val" id="avgCarbVal">—</div>
+      </div>
+      <div id="streakInfo" class="tip" style="margin-top:10px">Complete days to build your streak!</div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+// ── STATE ──────────────────────────────────────────────────
+let state = {
+  hp: 80, maxHp: 100,
+  xp: 0, level: 1,
+  streak: 0, totalDays: 30,
+  currentMeals: [],
+  completedDays: [],
+  events: [],
+};
+
+const TITLES = [
+  "Fat Apprentice","Butter Initiate","Keto Warrior","Cream Knight",
+  "Fat Flame Adept","Ketosis Sentinel","LCHF Champion","Realm Defender",
+  "Elite Fat Burner","Grand Keto Master"
+];
+
+// ── LOAD / SAVE ────────────────────────────────────────────
+async function loadState() {
+  try {
+    const r = await window.storage.get("keto_game_state");
+    if (r) {
+      const saved = JSON.parse(r.value);
+      Object.assign(state, saved);
+    }
+  } catch(e) {}
+  renderAll();
+}
+
+async function saveState() {
+  try {
+    await window.storage.set("keto_game_state", JSON.stringify(state));
+    const lbl = document.getElementById('lastSavedLabel');
+    if (lbl) lbl.textContent = '✅ Auto-saved ' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  } catch(e) {}
+}
+
+// ── TABS ──────────────────────────────────────────────────
+function showTab(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+  if (id === 'stats') updateStats();
+}
+
+// ── COMPUTED MACROS ────────────────────────────────────────
+function getTotals() {
+  return state.currentMeals.reduce((acc, m) => ({
+    fat: acc.fat + (Number(m.fat)||0),
+    protein: acc.protein + (Number(m.protein)||0),
+    carbs: acc.carbs + (Number(m.carbs)||0),
+    water: Number(m.water)||acc.water,
+  }), { fat:0, protein:0, carbs:0, water:0 });
+}
+
+function getKcal(t) { return Math.round(t.fat*9 + t.protein*4 + t.carbs*4); }
+function getFatPct(t) {
+  const kcal = getKcal(t);
+  return kcal > 0 ? Math.round((t.fat*9/kcal)*100) : 0;
+}
+
+// ── ADD MEAL ───────────────────────────────────────────────
+function addMeal() {
+  const name = document.getElementById('mealName').value.trim();
+  const fat = parseFloat(document.getElementById('mFat').value)||0;
+  const protein = parseFloat(document.getElementById('mProtein').value)||0;
+  const carbs = parseFloat(document.getElementById('mCarbs').value)||0;
+  const water = parseFloat(document.getElementById('mWater').value)||0;
+
+  if (!name) { logEvent('⚠️ Name your meal before adding it, warrior!', 'warn'); return; }
+
+  const meal = { name, fat, protein, carbs, water, time: new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) };
+  state.currentMeals.push(meal);
+
+  // Party reactions
+  const reactions = [];
+  const nameL = name.toLowerCase();
+
+  // Zaki interrogation
+  if (carbs > 15) {
+    state.hp = Math.max(0, state.hp - 5);
+    reactions.push({ char:'🔍 Zaki', text: `"${carbs}g carbs in ONE meal?! Explain yourself! That's suspicious activity. -5 HP."`, cls:'ev-bad' });
+    logEvent(`🔍 Zaki flags "${name}" — ${carbs}g carbs! -5 HP`, 'bad');
+  }
+
+  // Senedra yogurt cure
+  if (nameL.includes('yogurt') || nameL.includes('yoghurt')) {
+    state.hp = Math.min(state.maxHp, state.hp + 10);
+    reactions.push({ char:'🌟 Senedra', text: '"Yogurt! The Gut Shield activates! +10 HP restored. Your microbiome rejoices!"', cls:'ev-good' });
+    logEvent('🌟 Senedra casts Yogurt Cure! +10 HP', 'good');
+  }
+
+  // Mezstorm herb cache
+  if (nameL.includes('veg') || nameL.includes('salad') || nameL.includes('broccoli') || nameL.includes('okra') || nameL.includes('chayote') || nameL.includes('fungus')) {
+    state.hp = Math.min(state.maxHp, state.hp + 8);
+    reactions.push({ char:'🌿 Mezstorm', text: '"Vegetables! My Herb Cache activates. +8 HP. The realm nods in approval."', cls:'ev-good' });
+    logEvent('🌿 Mezstorm\'s Herb Cache: +8 HP', 'good');
+  }
+
+  // Soel purr for eggs/butter
+  if (nameL.includes('egg') || nameL.includes('butter') || nameL.includes('sardine') || nameL.includes('fish')) {
+    reactions.push({ char:'🐱 Soel', text: '"Mrrrow~ *purrs intensely* This is acceptable protein. He approves."', cls:'ev-info' });
+  }
+
+  // Mimi cheer for high protein
+  if (protein >= 25) {
+    reactions.push({ char:'🌸 Mimi', text: `"Wah, ${protein}g protein! Bestie you're doing so well! Keep it up! 💪"`, cls:'ev-good' });
+  }
+
+  // Aisy macro eye
+  if (nameL.includes('breaded') || nameL.includes('poppadom') || nameL.includes('potato') || nameL.includes('bun')) {
+    reactions.push({ char:'✨ Aisy', text: '"Macro Eye activated! Hidden starch detected. Watch your carb gate, sis."', cls:'ev-warn' });
+  }
+
+  // Show party reactions
+  if (reactions.length > 0) {
+    const panel = document.getElementById('partyReactPanel');
+    const container = document.getElementById('partyReactions');
+    panel.style.display = 'block';
+    container.innerHTML = reactions.map(r => `
+      <div class="dialogue" style="margin-bottom:8px">
+        <div class="dialogue-speaker">${r.char}</div>
+        <div class="dialogue-text ${r.cls}">${r.text}</div>
+      </div>`).join('');
+  }
+
+  logEvent(`🍽️ Logged: ${name} (F:${fat}g P:${protein}g C:${carbs}g)`, 'info');
+
+  // Clear inputs
+  ['mealName','mFat','mProtein','mCarbs'].forEach(id => document.getElementById(id).value = '');
+
+  renderAll();
+  saveState();
+}
+
+// ── REMOVE MEAL ────────────────────────────────────────────
+function removeMeal(idx) {
+  const m = state.currentMeals[idx];
+  state.currentMeals.splice(idx, 1);
+  logEvent(`🗑️ Removed: ${m.name}`, 'warn');
+  renderAll();
+  saveState();
+}
+
+// ── COMPLETE DAY ───────────────────────────────────────────
+function completeDay() {
+  const totals = getTotals();
+  if (state.currentMeals.length === 0) {
+    logEvent('⚠️ Log at least one meal before facing the Gatekeepers!', 'warn');
+    updateGatekeeper('neutral');
+    return;
+  }
+
+  const weight = parseFloat(document.getElementById('todayWeight').value)||null;
+  const energy = document.getElementById('todayEnergy').value;
+  const fatPct = getFatPct(totals);
+  const kcal = getKcal(totals);
+  let xpGain = 10;
+  let outcome = 'ok';
+
+  // Scoring
+  if (totals.carbs <= 20) { xpGain += 20; outcome = 'win'; }
+  else if (totals.carbs <= 30) { xpGain += 10; outcome = 'ok'; }
+  else { xpGain -= 5; outcome = 'loss'; }
+
+  if (fatPct >= 65) xpGain += 15;
+  if (totals.water >= 3) xpGain += 10;
+  if (totals.protein >= 50) xpGain += 10;
+
+  // Soel purr bonus
+  if (totals.carbs <= 20) {
+    xpGain += 5;
+    logEvent('🐱 Soel purrs! Purr Buff activated — +5 bonus XP!', 'good');
+  }
+
+  // Eliz water heal
+  if (totals.water >= 3) {
+    state.hp = Math.min(state.maxHp, state.hp + 15);
+    logEvent('💊 Eliz casts Restore Spell! Hit 3L water — +15 HP!', 'good');
+  }
+
+  // HP adjustment based on carbs
+  if (totals.carbs <= 20) {
+    state.hp = Math.min(state.maxHp, state.hp + 10);
+  } else if (totals.carbs > 50) {
+    state.hp = Math.max(0, state.hp - 15);
+  }
+
+  state.xp += Math.max(0, xpGain);
+  state.streak = outcome !== 'loss' ? state.streak + 1 : 0;
+  state.totalDays++;
+
+  // Level up
+  const newLevel = Math.floor(state.xp / 100) + 1;
+  if (newLevel > state.level) {
+    state.level = newLevel;
+    state.maxHp = 100 + (state.level - 1) * 10;
+    state.hp = state.maxHp; // full restore on level up
+    logEvent(`🌟 LEVEL UP! You are now Level ${state.level} — "${TITLES[Math.min(state.level-1, TITLES.length-1)]}"! Full HP restored!`, 'good');
+  }
+
+  // Gatekeeper verdict
+  updateGatekeeper(outcome, totals, fatPct, xpGain);
+
+  // Save to quest log
+  const dayRecord = {
+    day: state.totalDays,
+    date: new Date().toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}),
+    meals: [...state.currentMeals],
+    totals, fatPct, kcal, xpGain, outcome,
+    weight, energy, streak: state.streak,
+  };
+  state.completedDays.push(dayRecord);
+  state.currentMeals = [];
+
+  logEvent(`✅ Day ${state.totalDays} complete! +${xpGain} XP · Carbs: ${totals.carbs.toFixed(1)}g · Fat: ${fatPct}%`, outcome === 'win' ? 'good' : outcome === 'loss' ? 'bad' : 'warn');
+
+  if (weight) {
+    const lost = (91.0 - weight).toFixed(1);
+    logEvent(`⚖️ Weight logged: ${weight}kg · Lost from start: ${lost}kg`, 'info');
+  }
+
+  renderQuestLog();
+  renderAll();
+  saveState();
+
+  // Reset inputs
+  document.getElementById('todayWeight').value = '';
+  document.getElementById('todayEnergy').value = '';
+  document.getElementById('partyReactPanel').style.display = 'none';
+  document.getElementById('partyReactions').innerHTML = '';
+}
+
+// ── GATEKEEPER DIALOGUE ────────────────────────────────────
+function updateGatekeeper(outcome, totals, fatPct, xpGain) {
+  const el = document.getElementById('gatekeeperText');
+  const lines = {
+    win: [
+      `"${totals?.carbs.toFixed(1)}g carbs. ${fatPct}% fat. The gates of Ketosis swing open. +${xpGain} XP earned. Your parents are… mildly impressed."`,
+      `"Under 20g. The Realm is pleased. Soel is purring somewhere. Do not waste this momentum."`,
+      `"Excellent discipline today, warrior. The path to 70kg is clearer than yesterday. ${totals?.carbs.toFixed(1)}g carbs — that is how it is done."`,
+    ],
+    ok: [
+      `"Acceptable. Not exceptional. ${totals?.carbs.toFixed(1)}g carbs — you passed, but do not get comfortable. The gate opens… barely."`,
+      `"Hmm. ${totals?.carbs.toFixed(1)}g carbs. We expected less. You have the knowledge. Use it tomorrow."`,
+    ],
+    loss: [
+      `"${totals?.carbs.toFixed(1)}g carbs. The gate is CLOSED. Zaki is filing a report. Tomorrow you must do better, child."`,
+      `"Disappointed. You know the rules of this Realm. Return tomorrow with discipline restored."`,
+    ],
+    neutral: [
+      `"The gates of Ketosis are open, warrior. Log your first meal and prove your worth. We are watching."`,
+    ],
+  };
+  const pool = lines[outcome] || lines.neutral;
+  el.textContent = pool[Math.floor(Math.random() * pool.length)];
+}
+
+// ── EVENT LOG ─────────────────────────────────────────────
+function logEvent(text, type='info') {
+  const el = document.getElementById('eventLog');
+  const div = document.createElement('div');
+  div.className = `event-line ev-${type}`;
+  const time = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  div.textContent = `[${time}] ${text}`;
+  el.insertBefore(div, el.firstChild);
+  state.events = state.events.slice(0, 49);
+}
+
+// ── RENDER ALL ─────────────────────────────────────────────
+function renderAll() {
+  const totals = getTotals();
+  const kcal = getKcal(totals);
+  const fatPct = getFatPct(totals);
+
+  // Macro cards
+  document.getElementById('totalFat').textContent = totals.fat.toFixed(1) + 'g';
+  document.getElementById('totalProtein').textContent = totals.protein.toFixed(1) + 'g';
+  document.getElementById('totalCarbs').textContent = totals.carbs.toFixed(1) + 'g';
+  document.getElementById('totalCals').textContent = kcal;
+
+  // HP bar
+  const hpPct = Math.round((state.hp / state.maxHp) * 100);
+  document.getElementById('hpBar').style.width = hpPct + '%';
+  document.getElementById('hpVal').textContent = `${state.hp} / ${state.maxHp}`;
+
+  // XP bar
+  const xpInLevel = state.xp % 100;
+  document.getElementById('xpBar').style.width = xpInLevel + '%';
+  document.getElementById('xpVal').textContent = `${state.xp} XP total (${xpInLevel}/100 this level)`;
+
+  // Fat aura
+  document.getElementById('fatAuraBar').style.width = Math.min(100, fatPct) + '%';
+  document.getElementById('fatAuraVal').textContent = fatPct + '%';
+
+  // Water bar
+  const waterPct = Math.min(100, Math.round((totals.water / 3) * 100));
+  document.getElementById('waterBar').style.width = waterPct + '%';
+  document.getElementById('waterVal').textContent = `${totals.water.toFixed(1)} / 3.0 L`;
+
+  // Carb meter
+  const carbPct = Math.min(100, Math.round((totals.carbs / 50) * 100));
+  const carbFill = document.getElementById('carbMeter');
+  carbFill.style.width = Math.max(0, carbPct) + '%';
+  carbFill.textContent = totals.carbs.toFixed(1) + 'g';
+  let carbColor = '#2d7a3a', carbStatus = '✅ Safe Zone';
+  if (totals.carbs > 20 && totals.carbs <= 30) { carbColor = '#c8952a'; carbStatus = '⚠️ Caution'; }
+  if (totals.carbs > 30) { carbColor = '#9b2335'; carbStatus = '🚨 DANGER'; }
+  carbFill.style.background = carbColor;
+  document.getElementById('carbStatus').textContent = carbStatus;
+
+  // Level / title
+  document.getElementById('levelBadge').textContent = `Lv.${state.level}`;
+  document.getElementById('heroTitle').textContent = TITLES[Math.min(state.level - 1, TITLES.length - 1)];
+
+  // Day number
+  document.getElementById('dungeonDay').textContent =
+    `Day ${state.totalDays + 1} — ${new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})}`;
+
+  // Meal list
+  const mealList = document.getElementById('mealList');
+  if (state.currentMeals.length === 0) {
+    mealList.innerHTML = '<div class="small" style="text-align:center;padding:8px">No meals logged yet today</div>';
+  } else {
+    mealList.innerHTML = state.currentMeals.map((m,i) => `
+      <div class="meal-entry">
+        <div>
+          <div class="meal-name">🍽️ ${m.name} <span style="color:var(--muted);font-size:12px">${m.time}</span></div>
+          <div class="meal-macros">
+            <span style="color:var(--fat-c)">🟡 ${m.fat}g fat</span>
+            <span style="color:var(--prot-c)">🟢 ${m.protein}g prot</span>
+            <span style="color:var(--carb-c)">🔴 ${m.carbs}g carbs</span>
+          </div>
+        </div>
+        <button class="rm-btn" onclick="removeMeal(${i})">×</button>
+      </div>`).join('');
+  }
+}
+
+// ── QUEST LOG ─────────────────────────────────────────────
+function renderQuestLog() {
+  const el = document.getElementById('questLogList');
+  if (state.completedDays.length === 0) {
+    el.innerHTML = '<div class="small" style="text-align:center;padding:20px">No completed quests yet.</div>';
+    return;
+  }
+  const sorted = [...state.completedDays].reverse();
+  el.innerHTML = sorted.map((d, displayIdx) => {
+    const realIdx = state.completedDays.length - 1 - displayIdx;
+    const badgeCls = d.outcome === 'win' ? 'badge-win' : d.outcome === 'loss' ? 'badge-loss' : 'badge-ok';
+    const badgeTxt = d.outcome === 'win' ? '⚔️ Victory' : d.outcome === 'loss' ? '💀 Defeat' : '🛡️ Survived';
+    const stars = d.streak >= 7 ? '⭐⭐⭐' : d.streak >= 3 ? '⭐⭐' : d.streak >= 1 ? '⭐' : '';
+    const mealRows = d.meals.map(m => `
+        <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px">
+          <span>🍽️ ${m.name}</span>
+          <span><span style="color:var(--fat-c)">F:${m.fat}g</span> · <span style="color:var(--prot-c)">P:${m.protein}g</span> · <span style="color:var(--carb-c)">C:${m.carbs}g</span></span>
+        </div>`).join('');
+    return `
+      <div class="quest-entry" style="cursor:pointer" onclick="toggleQuestDetail(${realIdx})">
+        <div class="quest-date">Day ${d.day} — ${d.date} ${d.weight ? `· ⚖️ ${d.weight}kg` : ''} ${d.energy ? '· ' + ['','😴','😕','😐','🙂','⚡'][d.energy] : ''}</div>
+        <div class="quest-result">
+          <span class="badge ${badgeCls}">${badgeTxt}</span>
+          ${stars ? `<span class="stars">${stars}</span>` : ''}
+          +${d.xpGain} XP · ${d.totals.carbs.toFixed(1)}g carbs · ${d.fatPct}% fat · ${d.kcal} kcal
+          · Streak: ${d.streak} day${d.streak !== 1 ? 's' : ''}
+        </div>
+        <div class="small" style="margin-top:4px">${d.meals.map(m=>m.name).join(' · ')} <span style="color:var(--gold)">▾ tap for details</span></div>
+        <div id="questDetail-${realIdx}" style="display:none;margin-top:10px;padding-top:8px;border-top:1px dashed var(--border)">
+          ${mealRows}
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn btn-ghost" style="font-size:11px;padding:5px 10px" onclick="event.stopPropagation(); reopenDay(${realIdx})">✏️ Reopen &amp; Edit This Day</button>
+            <button class="btn btn-red" style="font-size:11px;padding:5px 10px" onclick="event.stopPropagation(); deleteQuestDay(${realIdx})">🗑️ Delete Entry</button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function toggleQuestDetail(idx) {
+  const el = document.getElementById('questDetail-' + idx);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function reopenDay(idx) {
+  const day = state.completedDays[idx];
+  if (!confirm(`Reopen Day ${day.day} (${day.date}) for editing? It will move back to your Daily Dungeon screen and be removed from the Quest Log until you resubmit.`)) return;
+  state.currentMeals = [...day.meals];
+  state.completedDays.splice(idx, 1);
+  state.totalDays = Math.max(0, state.totalDays - 1);
+  saveState();
+  renderAll();
+  renderQuestLog();
+  showTabProgrammatic('dungeon');
+  logEvent(`✏️ Reopened Day ${day.day} for editing. Make your changes and resubmit.`, 'warn');
+}
+
+function deleteQuestDay(idx) {
+  const day = state.completedDays[idx];
+  if (!confirm(`Permanently delete Day ${day.day} (${day.date})? This cannot be undone.`)) return;
+  state.completedDays.splice(idx, 1);
+  saveState();
+  renderQuestLog();
+  updateStats();
+  logEvent(`🗑️ Deleted Day ${day.day} from the Chronicle.`, 'warn');
+}
+
+function showTabProgrammatic(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t => {
+    if (t.textContent.toLowerCase().includes(id === 'dungeon' ? 'dungeon' : id)) t.classList.add('active');
+  });
+}
+
+// ── STATS ─────────────────────────────────────────────────
+function updateStats() {
+  const days = state.completedDays;
+  if (days.length === 0) return;
+
+  const avgF = days.reduce((s,d)=>s+d.totals.fat,0)/days.length;
+  const avgP = days.reduce((s,d)=>s+d.totals.protein,0)/days.length;
+  const avgC = days.reduce((s,d)=>s+d.totals.carbs,0)/days.length;
+
+  document.getElementById('avgFatVal').textContent = avgF.toFixed(1) + 'g';
+  document.getElementById('avgProtVal').textContent = avgP.toFixed(1) + 'g';
+  document.getElementById('avgCarbVal').textContent = avgC.toFixed(1) + 'g';
+
+  const maxM = Math.max(avgF, avgP, avgC, 1);
+  document.getElementById('avgFatBar').style.width = (avgF/maxM*100) + '%';
+  document.getElementById('avgProtBar').style.width = (avgP/maxM*100) + '%';
+  document.getElementById('avgCarbBar').style.width = (avgC/maxM*100) + '%';
+
+  const wins = days.filter(d=>d.outcome==='win').length;
+  document.getElementById('streakInfo').textContent =
+    `${days.length} days completed · ${wins} victories · Current streak: ${state.streak} · Best: ${Math.max(...days.map(d=>d.streak), 0)}`;
+
+  // Latest weight
+  const latestWeight = [...days].reverse().find(d=>d.weight);
+  if (latestWeight) {
+    const lost = (91.0 - latestWeight.weight).toFixed(1);
+    const remaining = (latestWeight.weight - 70).toFixed(1);
+    const progress = ((91-latestWeight.weight)/(91-70)*100).toFixed(1);
+    document.getElementById('weightStat').textContent = latestWeight.weight + ' kg';
+    document.getElementById('weightBar').style.width = (100 - (latestWeight.weight - 70)/(91-70)*100) + '%';
+    document.getElementById('weightProgress').textContent =
+      `Total lost: ${lost} kg · Remaining: ${remaining} kg · Progress: ${progress}% toward 70kg goal`;
+  }
+}
+
+
+
+// ── EXPORT / IMPORT SAVE ──────────────────────────────────
+function exportSave() {
+  const data = JSON.stringify(state, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'keto-quest-save-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  document.getElementById('lastSavedLabel').textContent = '✅ Exported at ' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  logEvent('💾 Save file exported! Keep it safe, warrior.', 'good');
+}
+
+function importSave(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async e => {
+    try {
+      const loaded = JSON.parse(e.target.result);
+      Object.assign(state, loaded);
+      await saveState();
+      renderAll();
+      renderQuestLog();
+      updateStats();
+      document.getElementById('lastSavedLabel').textContent = '✅ Save imported at ' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+      logEvent('📂 Save file imported successfully! Welcome back, ' + (loaded.level ? 'Level ' + loaded.level + ' warrior' : 'warrior') + '.', 'good');
+    } catch(err) {
+      logEvent('❌ Import failed — invalid save file.', 'bad');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ── FOOD LIBRARY ──────────────────────────────────────────
+const FOODS = [
+  // Eggs & Dairy
+  { name:"1 Egg", cat:"🥚 Egg & Dairy", fat:5, protein:6, carbs:0.4, emoji:"🥚" },
+  { name:"3 Eggs", cat:"🥚 Egg & Dairy", fat:15, protein:18, carbs:1.2, emoji:"🥚" },
+  { name:"Butter (10ml pkt)", cat:"🥚 Egg & Dairy", fat:8, protein:0, carbs:0, emoji:"🧈" },
+  { name:"Butter (30ml)", cat:"🥚 Egg & Dairy", fat:25, protein:0, carbs:0, emoji:"🧈" },
+  { name:"Cheddar Cheese (30g)", cat:"🥚 Egg & Dairy", fat:9, protein:7, carbs:0.2, emoji:"🧀" },
+  { name:"Cream Cheese (30g)", cat:"🥚 Egg & Dairy", fat:10, protein:2, carbs:0.8, emoji:"🧀" },
+  { name:"Tatua Cream (dash ~15ml)", cat:"🥚 Egg & Dairy", fat:6, protein:0.4, carbs:0.5, emoji:"🫙" },
+  { name:"Sahara Greek Yogurt (100g)", cat:"🥚 Egg & Dairy", fat:10, protein:6, carbs:4, emoji:"🍦" },
+  { name:"Chobani Greek Yogurt (100g)", cat:"🥚 Egg & Dairy", fat:3, protein:10, carbs:4, emoji:"🍦" },
+
+  // Poultry (Chicken cuts)
+  { name:"Chicken Drumstick (skin on)", cat:"🍗 Poultry", fat:8, protein:22, carbs:0, emoji:"🍗" },
+  { name:"Chicken Thigh (skin on, 100g)", cat:"🍗 Poultry", fat:13, protein:21, carbs:0, emoji:"🍗" },
+  { name:"Chicken Breast (skinless, 100g)", cat:"🍗 Poultry", fat:3, protein:31, carbs:0, emoji:"🍗" },
+  { name:"Chicken Wing (1 piece)", cat:"🍗 Poultry", fat:7, protein:9, carbs:0, emoji:"🍗" },
+  { name:"Chicken Feet (100g)", cat:"🍗 Poultry", fat:15, protein:19, carbs:0.2, emoji:"🍗" },
+  { name:"Chicken Liver (100g)", cat:"🍗 Poultry", fat:5, protein:25, carbs:1, emoji:"🍗" },
+  { name:"Whole Chicken 'Isi' (mixed cuts, 100g)", cat:"🍗 Poultry", fat:10, protein:24, carbs:0, emoji:"🍗" },
+
+  // Pork
+  { name:"Pork Belly (100g)", cat:"🥓 Pork", fat:35, protein:17, carbs:0, emoji:"🥓" },
+  { name:"Sio Bak / Roast Pork (100g)", cat:"🥓 Pork", fat:30, protein:18, carbs:0.5, emoji:"🥓" },
+  { name:"Char Siew (2 slices)", cat:"🥓 Pork", fat:8, protein:12, carbs:4, emoji:"🥓" },
+  { name:"Pig Trotters / Lor (100g)", cat:"🥓 Pork", fat:20, protein:20, carbs:1, emoji:"🥓" },
+  { name:"Lup Cheong / Chinese Sausage (1pc)", cat:"🥓 Pork", fat:11, protein:6, carbs:3, emoji:"🌭" },
+  { name:"Bacon (2 rashers, grilled)", cat:"🥓 Pork", fat:8, protein:10, carbs:0.2, emoji:"🥓" },
+  { name:"Bacon (4 rashers, grilled)", cat:"🥓 Pork", fat:16, protein:20, carbs:0.4, emoji:"🥓" },
+  { name:"Pork Loin (lean, 100g)", cat:"🥓 Pork", fat:7, protein:26, carbs:0, emoji:"🥩" },
+  { name:"Minced Pork (100g)", cat:"🥓 Pork", fat:21, protein:17, carbs:0, emoji:"🥩" },
+
+  // Seafood & Fish (Brunei / SE Asia common)
+  { name:"Tenggiri / Mackerel (100g)", cat:"🐟 Seafood & Fish", fat:12, protein:24, carbs:0, emoji:"🐟" },
+  { name:"Ikan Bilis / Anchovies, Pusu (20g)", cat:"🐟 Seafood & Fish", fat:2, protein:9, carbs:0, emoji:"🐟" },
+  { name:"Sardines, ½ Can in Olive Oil", cat:"🐟 Seafood & Fish", fat:9, protein:12, carbs:0, emoji:"🐟" },
+  { name:"Ikan Kembung / Round Scad (100g)", cat:"🐟 Seafood & Fish", fat:8, protein:22, carbs:0, emoji:"🐟" },
+  { name:"Salmon (100g)", cat:"🐟 Seafood & Fish", fat:13, protein:22, carbs:0, emoji:"🐟" },
+  { name:"Prawns / Udang (100g, no breading)", cat:"🐟 Seafood & Fish", fat:1, protein:24, carbs:0.5, emoji:"🦐" },
+  { name:"Squid / Sotong (100g)", cat:"🐟 Seafood & Fish", fat:1.5, protein:18, carbs:3, emoji:"🦑" },
+  { name:"Crab Meat (100g)", cat:"🐟 Seafood & Fish", fat:1, protein:19, carbs:0, emoji:"🦀" },
+  { name:"Catfish / Ikan Keli (100g)", cat:"🐟 Seafood & Fish", fat:7, protein:18, carbs:0, emoji:"🐟" },
+  { name:"Pomfret / Ikan Bawal (100g)", cat:"🐟 Seafood & Fish", fat:5, protein:20, carbs:0, emoji:"🐟" },
+  { name:"Tilapia (100g)", cat:"🐟 Seafood & Fish", fat:2, protein:20, carbs:0, emoji:"🐟" },
+
+  // Plant Protein
+  { name:"Tempeh (50g)", cat:"🟫 Plant Protein", fat:4, protein:10, carbs:4, emoji:"🟫" },
+  { name:"Tofu / Tau Kwa (100g)", cat:"🟫 Plant Protein", fat:5, protein:10, carbs:1.5, emoji:"⬜" },
+  { name:"Edamame (100g)", cat:"🟫 Plant Protein", fat:5, protein:11, carbs:5, emoji:"🫛" },
+  { name:"Ham (2 slices)", cat:"🟫 Plant Protein", fat:3, protein:8, carbs:0.5, emoji:"🥓" },
+
+  // Keto-Friendly Vegetables (low carb)
+  { name:"Bok Choy / Greens (100g)", cat:"🥦 Keto Veg (Low Carb)", fat:0.2, protein:1.5, carbs:1.5, emoji:"🥬" },
+  { name:"Okra / Lady's Finger (100g)", cat:"🥦 Keto Veg (Low Carb)", fat:0.2, protein:2, carbs:4, emoji:"🌿" },
+  { name:"Broccoli (100g)", cat:"🥦 Keto Veg (Low Carb)", fat:0.4, protein:3, carbs:4, emoji:"🥦" },
+  { name:"Bitter Gourd / Peria (100g)", cat:"🥦 Keto Veg (Low Carb)", fat:0.2, protein:1, carbs:3, emoji:"🥒" },
+  { name:"Chayote / Labu Siam (100g)", cat:"🥦 Keto Veg (Low Carb)", fat:0.1, protein:0.8, carbs:3.5, emoji:"🥒" },
+  { name:"Brinjal / Eggplant (100g)", cat:"🥦 Keto Veg (Low Carb)", fat:0.2, protein:1, carbs:4, emoji:"🍆" },
+  { name:"Cauliflower (100g)", cat:"🥦 Keto Veg (Low Carb)", fat:0.3, protein:2, carbs:3, emoji:"🥦" },
+  { name:"Cabbage (100g)", cat:"🥦 Keto Veg (Low Carb)", fat:0.1, protein:1, carbs:4, emoji:"🥬" },
+  { name:"Cucumber (100g)", cat:"🥦 Keto Veg (Low Carb)", fat:0.1, protein:0.7, carbs:2.5, emoji:"🥒" },
+  { name:"Tomato (1 medium)", cat:"🥦 Keto Veg (Low Carb)", fat:0.2, protein:1, carbs:3.5, emoji:"🍅" },
+  { name:"Spinach (100g)", cat:"🥦 Keto Veg (Low Carb)", fat:0.4, protein:2.9, carbs:1.4, emoji:"🥬" },
+  { name:"Kailan / Chinese Broccoli (100g)", cat:"🥦 Keto Veg (Low Carb)", fat:0.3, protein:2.5, carbs:2, emoji:"🥬" },
+  { name:"Bean Sprouts (100g)", cat:"🥦 Keto Veg (Low Carb)", fat:0.2, protein:3, carbs:3, emoji:"🌱" },
+  { name:"Capsicum / Bell Pepper (100g)", cat:"🥦 Keto Veg (Low Carb)", fat:0.3, protein:1, carbs:4.5, emoji:"🫑" },
+  { name:"Mixed Veg (100g)", cat:"🥦 Keto Veg (Low Carb)", fat:0.3, protein:2, carbs:5, emoji:"🥗" },
+
+  // Higher-Carb Vegetables (eat mindfully on LCHF)
+  { name:"Pumpkin (100g)", cat:"⚠️ Higher-Carb Veg", fat:0.1, protein:1, carbs:6, emoji:"🎃" },
+  { name:"Pumpkin (1 cup, ~245g)", cat:"⚠️ Higher-Carb Veg", fat:0.3, protein:2.5, carbs:14.5, emoji:"🎃" },
+  { name:"Carrot (100g)", cat:"⚠️ Higher-Carb Veg", fat:0.2, protein:0.9, carbs:8, emoji:"🥕" },
+  { name:"Peas (100g)", cat:"⚠️ Higher-Carb Veg", fat:0.4, protein:5, carbs:11, emoji:"🟢" },
+  { name:"Corn (100g)", cat:"⚠️ Higher-Carb Veg", fat:1.2, protein:3.3, carbs:19, emoji:"🌽" },
+  { name:"Potato (100g)", cat:"⚠️ Higher-Carb Veg", fat:0.1, protein:2, carbs:17, emoji:"🥔" },
+  { name:"½ Potato (~75g)", cat:"⚠️ Higher-Carb Veg", fat:0.1, protein:1.5, carbs:13, emoji:"🥔" },
+  { name:"Sweet Potato (100g)", cat:"⚠️ Higher-Carb Veg", fat:0.1, protein:1.6, carbs:17, emoji:"🍠" },
+  { name:"Beetroot (100g)", cat:"⚠️ Higher-Carb Veg", fat:0.2, protein:1.6, carbs:8, emoji:"🟣" },
+  { name:"Konjac Dry Rice, cooked (100g)", cat:"⚠️ Higher-Carb Veg", fat:0.3, protein:1.5, carbs:13.7, emoji:"🍚" },
+  { name:"Konjac Dry Rice, cooked (½ cup ~80g)", cat:"⚠️ Higher-Carb Veg", fat:0.2, protein:1.2, carbs:11, emoji:"🍚" },
+  { name:"Mung Beans, boiled (1 cup)", cat:"⚠️ Higher-Carb Veg", fat:0.8, protein:14, carbs:32, emoji:"🫘" },
+  { name:"Mung Beans, boiled (½ cup)", cat:"⚠️ Higher-Carb Veg", fat:0.4, protein:7, carbs:16, emoji:"🫘" },
+  { name:"Black Beans, boiled (100g)", cat:"⚠️ Higher-Carb Veg", fat:0.5, protein:8.9, carbs:14, emoji:"🫘" },
+  { name:"Chickpeas / Garbanzo, boiled (100g)", cat:"⚠️ Higher-Carb Veg", fat:2.6, protein:8.9, carbs:18, emoji:"🫘" },
+  { name:"Lentils, boiled (100g)", cat:"⚠️ Higher-Carb Veg", fat:0.4, protein:9, carbs:14, emoji:"🫘" },
+  { name:"Kidney Beans, boiled (100g)", cat:"⚠️ Higher-Carb Veg", fat:0.5, protein:8.7, carbs:14, emoji:"🫘" },
+  { name:"Soya Beans, boiled (100g)", cat:"⚠️ Higher-Carb Veg", fat:9, protein:17, carbs:6, emoji:"🫘" },
+  { name:"Edamame, shelled (100g)", cat:"⚠️ Higher-Carb Veg", fat:5, protein:11, carbs:5, emoji:"🫛" },
+  { name:"Long Beans / Kacang Panjang (100g)", cat:"🥦 Keto Veg (Low Carb)", fat:0.1, protein:1.8, carbs:3.5, emoji:"🌿" },
+  { name:"Winged Beans / Kacang Botol (100g)", cat:"🥦 Keto Veg (Low Carb)", fat:1, protein:6, carbs:3, emoji:"🌿" },
+  { name:"Sweet Corn Kernels (½ cup)", cat:"⚠️ Higher-Carb Veg", fat:0.6, protein:1.7, carbs:10, emoji:"🌽" },
+
+  // Mushrooms & Fungus
+  { name:"Button Mushroom (100g)", cat:"🍄 Mushrooms & Fungus", fat:0.3, protein:3, carbs:2.5, emoji:"🍄" },
+  { name:"Shiitake Mushroom (100g)", cat:"🍄 Mushrooms & Fungus", fat:0.5, protein:2.2, carbs:6.8, emoji:"🍄" },
+  { name:"Enoki Mushroom (100g)", cat:"🍄 Mushrooms & Fungus", fat:0.3, protein:2.7, carbs:6, emoji:"🍄" },
+  { name:"Oyster Mushroom (100g)", cat:"🍄 Mushrooms & Fungus", fat:0.3, protein:3.3, carbs:3.5, emoji:"🍄" },
+  { name:"King Oyster Mushroom (100g)", cat:"🍄 Mushrooms & Fungus", fat:0.4, protein:2.5, carbs:4, emoji:"🍄" },
+  { name:"Hei'mu'er Black Fungus (50g, dried→soaked)", cat:"🍄 Mushrooms & Fungus", fat:0.1, protein:1, carbs:3, emoji:"🍄" },
+  { name:"White Fungus / Snow Fungus (50g)", cat:"🍄 Mushrooms & Fungus", fat:0.1, protein:0.5, carbs:4, emoji:"🍄" },
+
+  // Fats & Extras
+  { name:"Coconut Oil, Virgin (1 tbsp)", cat:"🫒 Fats & Extras", fat:14, protein:0, carbs:0, emoji:"🥥" },
+  { name:"Coconut Oil, Refined (1 tbsp)", cat:"🫒 Fats & Extras", fat:14, protein:0, carbs:0, emoji:"🥥" },
+  { name:"MCT Oil / Fractionated Coconut (1 tbsp)", cat:"🫒 Fats & Extras", fat:14, protein:0, carbs:0, emoji:"🥥" },
+  { name:"Coconut Cream (2 tbsp)", cat:"🫒 Fats & Extras", fat:9, protein:0.9, carbs:1.6, emoji:"🥥" },
+  { name:"Coconut Milk, full fat (100ml)", cat:"🫒 Fats & Extras", fat:15, protein:1.5, carbs:2.8, emoji:"🥥" },
+  { name:"Olive Oil (1 tbsp)", cat:"🫒 Fats & Extras", fat:14, protein:0, carbs:0, emoji:"🫒" },
+  { name:"Cowhead Butter Pkt (10g)", cat:"🫒 Fats & Extras", fat:8, protein:0, carbs:0, emoji:"🧈" },
+  { name:"Golden Churn Butter Pkt", cat:"🫒 Fats & Extras", fat:8, protein:0, carbs:0, emoji:"🧈" },
+  { name:"Nescafé (plain)", cat:"🫒 Fats & Extras", fat:0, protein:0.5, carbs:1, emoji:"☕" },
+  { name:"APC / Jersey Coffee", cat:"🫒 Fats & Extras", fat:2, protein:1, carbs:2, emoji:"☕" },
+
+  // Common Meals
+  { name:"Ayam Penyet (no rice)", cat:"🍱 Common Meals", fat:20, protein:35, carbs:8, emoji:"🍛" },
+  { name:"Chicken Rendang (no rice)", cat:"🍱 Common Meals", fat:18, protein:28, carbs:5, emoji:"🍛" },
+  { name:"Chicken Masala (no sauce, 100g)", cat:"🍱 Common Meals", fat:8, protein:25, carbs:4, emoji:"🍛" },
+  { name:"Lelapan (no rice, full)", cat:"🍱 Common Meals", fat:25, protein:35, carbs:6, emoji:"🍱" },
+  { name:"Salty Chicken Soup (bowl)", cat:"🍱 Common Meals", fat:15, protein:35, carbs:3, emoji:"🥣" },
+  { name:"1 Poppadom", cat:"🍱 Common Meals", fat:3, protein:2, carbs:8, emoji:"🫓" },
+  { name:"Foo Yung Egg / Fu Rong Dan (1 omelette)", cat:"🍱 Common Meals", fat:18, protein:14, carbs:3, emoji:"🍳" },
+  { name:"Foo Yung Egg with veg & meat filling", cat:"🍱 Common Meals", fat:20, protein:18, carbs:4, emoji:"🍳" },
+  { name:"Yong Chap / Yong Tau Fu, broth (5 pcs, no rice)", cat:"🍱 Common Meals", fat:6, protein:18, carbs:5, emoji:"🐟" },
+  { name:"Yong Chap stuffed brinjal (2 pcs)", cat:"🍱 Common Meals", fat:4, protein:8, carbs:3, emoji:"🍆" },
+  { name:"Yong Chap stuffed bitter gourd (2 pcs)", cat:"🍱 Common Meals", fat:4, protein:8, carbs:3, emoji:"🥒" },
+  { name:"Yong Chap stuffed tofu (2 pcs)", cat:"🍱 Common Meals", fat:6, protein:10, carbs:2, emoji:"⬜" },
+  { name:"Sinigang, 1 bowl (pork, no rice)", cat:"🍱 Common Meals", fat:12, protein:22, carbs:8, emoji:"🥣" },
+  { name:"Sinigang, 1 bowl (fish/seafood, no rice)", cat:"🍱 Common Meals", fat:5, protein:20, carbs:7, emoji:"🥣" },
+  { name:"Sinigang, 1 bowl (with kangkong & veg)", cat:"🍱 Common Meals", fat:10, protein:20, carbs:10, emoji:"🥣" },
+  { name:"Breaded Prawns (light, Chinese-style, 6pc)", cat:"🍱 Common Meals", fat:8, protein:20, carbs:8, emoji:"🍤" },
+];
+
+let comboItems = [];
+
+function renderFoodLibrary() {
+  const cats = [...new Set(FOODS.map(f=>f.cat))];
+  const el = document.getElementById('foodLibrary');
+  let html = '';
+  cats.forEach(cat => {
+    html += `<div style="width:100%;font-size:11px;color:var(--gold);font-family:'Cinzel',serif;letter-spacing:0.06em;margin-top:8px;margin-bottom:3px">${cat}</div>`;
+    FOODS.filter(f=>f.cat===cat).forEach((f,i) => {
+      const idx = FOODS.indexOf(f);
+      html += `<button onclick="quickAdd(${idx})" style="
+        background:var(--deep);border:1px solid var(--border);border-radius:20px;
+        color:var(--cream);font-size:12px;padding:5px 10px;cursor:pointer;
+        font-family:'Crimson Pro',serif;transition:all 0.15s;white-space:nowrap;
+        " onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+        ${f.emoji} ${f.name}
+      </button>`;
+    });
+  });
+  el.innerHTML = html;
+}
+
+function quickAdd(idx) {
+  const f = FOODS[idx];
+  // Fill form fields directly for single quick-add
+  document.getElementById('mealName').value = f.name;
+  document.getElementById('mFat').value = f.fat;
+  document.getElementById('mProtein').value = f.protein;
+  document.getElementById('mCarbs').value = f.carbs;
+  // Also add to combo
+  comboItems.push({...f});
+  updateCombo();
+  logEvent(`📚 Quick-filled: ${f.emoji} ${f.name}`, 'info');
+}
+
+function updateCombo() {
+  const el = document.getElementById('comboList');
+  if (comboItems.length === 0) { el.textContent = '—'; return; }
+  const totF = comboItems.reduce((s,i)=>s+i.fat,0).toFixed(1);
+  const totP = comboItems.reduce((s,i)=>s+i.protein,0).toFixed(1);
+  const totC = comboItems.reduce((s,i)=>s+i.carbs,0).toFixed(1);
+  el.innerHTML = comboItems.map(i=>i.emoji+' '+i.name).join(' + ')
+    + `<span style="color:var(--muted);margin-left:8px">→ F:${totF}g P:${totP}g C:${totC}g</span>`;
+}
+
+function addComboMeal() {
+  if (comboItems.length === 0) return;
+  const name = comboItems.map(i=>i.name).join(' + ');
+  const fat = comboItems.reduce((s,i)=>s+i.fat,0);
+  const protein = comboItems.reduce((s,i)=>s+i.protein,0);
+  const carbs = comboItems.reduce((s,i)=>s+i.carbs,0);
+  document.getElementById('mealName').value = name;
+  document.getElementById('mFat').value = fat.toFixed(1);
+  document.getElementById('mProtein').value = protein.toFixed(1);
+  document.getElementById('mCarbs').value = carbs.toFixed(1);
+  clearCombo();
+  logEvent(`🥗 Combo built: ${name}`, 'info');
+}
+
+function clearCombo() {
+  comboItems = [];
+  updateCombo();
+}
+
+// Render library on load
+renderFoodLibrary();
+
+// Joel's Anchor Aura — passive +10 HP on day load (if not already applied today)
+if (!state._joelApplied) {
+  state.hp = Math.min(state.maxHp, state.hp + 10);
+  state._joelApplied = true;
+  logEvent("🛡️ Joel's Anchor Aura activates — +10 HP. He's got your back.", 'good');
+}
+
+
+// ── IDLE ADVENTURE SYSTEM ──────────────────────────────────
+const IDLE_PARTY = [
+  { id:'soel', name:'Soel', emoji:'🐱', role:'Familiar', minHrs:1, maxHrs:4 },
+  { id:'joel', name:'Joel', emoji:'🛡️', role:'Paladin', minHrs:4, maxHrs:10 },
+  { id:'mimi', name:'Mimi', emoji:'🌸', role:'Ally', minHrs:2, maxHrs:6 },
+  { id:'aisy', name:'Aisy', emoji:'✨', role:'Ally', minHrs:2, maxHrs:6 },
+  { id:'aisyah', name:'Aisyah', emoji:'🏪', role:'Merchant', minHrs:6, maxHrs:14 },
+  { id:'mezstorm', name:'Mezstorm', emoji:'🌿', role:'Supplier', minHrs:4, maxHrs:12 },
+  { id:'eliz', name:'Eliz', emoji:'💊', role:'Healer', minHrs:3, maxHrs:8 },
+  { id:'senedra', name:'Senedra', emoji:'🌟', role:'Healer', minHrs:3, maxHrs:8 },
+  { id:'zaki', name:'Zaki', emoji:'🔍', role:'Inquisitor', minHrs:2, maxHrs:5 },
+];
+
+const IDLE_EVENTS = {
+  soel: [
+    { text:"Soel napped in a sunbeam for {h}h and found a stray feather. +{xp} XP, purely for being adorable.", xp:[3,8], hp:0 },
+    { text:"Soel knocked something off a table during his {h}h patrol. No loot, but the sound effect was 10/10. +{xp} XP.", xp:[2,6], hp:0 },
+    { text:"Soel discovered a sunny windowsill ({h}h expedition) and claimed it as Kitty Territory. +{hp} HP from the vibes.", xp:[2,5], hp:[3,8] },
+  ],
+  joel: [
+    { text:"Joel quietly handled something stressful for {h}h so you wouldn't have to. +{hp} HP, no questions asked.", xp:[5,10], hp:[8,15] },
+    { text:"Joel went on a {h}h supply run and came back with snacks (the keto-friendly kind). +{xp} XP.", xp:[8,15], hp:[5,10] },
+    { text:"Joel stood guard for {h}h. Nothing happened, which is exactly the point. +{hp} HP — Anchor Aura reinforced.", xp:[5,12], hp:[5,12] },
+  ],
+  mimi: [
+    { text:"Mimi spent {h}h hyping you up to anyone who'd listen. +{xp} XP from secondhand confidence.", xp:[6,14], hp:[2,6] },
+    { text:"Mimi found a new LCHF recipe during her {h}h scouting mission. +{xp} XP for future inspiration.", xp:[5,12], hp:0 },
+  ],
+  aisy: [
+    { text:"Aisy's Macro Eye scanned the realm for {h}h and flagged 2 hidden-carb traps before you even got there. +{xp} XP.", xp:[6,14], hp:[2,5] },
+    { text:"Aisy spent {h}h organizing a spreadsheet nobody asked for. Somehow it helped. +{xp} XP.", xp:[5,10], hp:0 },
+  ],
+  aisyah: [
+    { text:"Aisyah ran the shop for {h}h and restocked rare LCHF ingredients. +{xp} XP, Merchant's Cut secured.", xp:[10,20], hp:[3,8] },
+    { text:"Aisyah closed a bulk deal during her {h}h trading run. +{xp} XP and a discount on tempeh, probably.", xp:[8,18], hp:0 },
+  ],
+  mezstorm: [
+    { text:"Mezstorm foraged for {h}h and returned with a fresh Herb Cache. +{hp} HP, +{xp} XP.", xp:[6,15], hp:[5,10] },
+    { text:"Mezstorm tended the garden for {h}h. The vegetables approve of your life choices. +{xp} XP.", xp:[5,12], hp:[3,7] },
+  ],
+  eliz: [
+    { text:"Eliz studied healing texts for {h}h and leveled up her Restore Spell. +{hp} HP banked for later.", xp:[6,12], hp:[8,15] },
+    { text:"Eliz checked in on the Realm's wellbeing during a {h}h rounds. +{hp} HP, gentle reminder to drink water.", xp:[4,10], hp:[6,12] },
+  ],
+  senedra: [
+    { text:"Senedra brewed a {h}h batch of Gut Shield tonic. +{hp} HP whenever you're ready for it.", xp:[5,10], hp:[6,12] },
+    { text:"Senedra meditated for {h}h and returned glowing. +{xp} XP, +{hp} HP, mysteriously well-rested.", xp:[6,14], hp:[5,10] },
+  ],
+  zaki: [
+    { text:"Zaki patrolled the carb borders for {h}h. No violations reported (this time). +{xp} XP for diligence.", xp:[6,12], hp:0 },
+    { text:"Zaki interrogated a suspicious poppadom for {h}h. It confessed everything. +{xp} XP.", xp:[5,10], hp:0 },
+  ],
+};
+
+function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+function renderIdleBoard() {
+  if (!state.idleQuests) state.idleQuests = [];
+  const now = Date.now();
+
+  // Resolve any completed quests automatically
+  const stillActive = [];
+  state.idleQuests.forEach(q => {
+    if (now >= q.returnAt) {
+      resolveIdleQuest(q);
+    } else {
+      stillActive.push(q);
+    }
+  });
+  state.idleQuests = stillActive;
+
+  // Available party (not currently on a quest)
+  const busyIds = state.idleQuests.map(q => q.charId);
+  const available = IDLE_PARTY.filter(p => !busyIds.includes(p.id));
+
+  const avEl = document.getElementById('idlePartyAvailable');
+  if (available.length === 0) {
+    avEl.innerHTML = '<div class="small">The whole party is out adventuring! Check back soon.</div>';
+  } else {
+    avEl.innerHTML = available.map(p => `
+      <button onclick="sendOnQuest('${p.id}')" style="
+        background:var(--deep);border:1px solid var(--border);border-radius:20px;
+        color:var(--cream);font-size:12px;padding:6px 12px;cursor:pointer;
+        font-family:'Crimson Pro',serif;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+        ${p.emoji} Send ${p.name}
+      </button>`).join('');
+  }
+
+  // Active quests display
+  const actEl = document.getElementById('idleActiveQuests');
+  if (state.idleQuests.length === 0) {
+    actEl.innerHTML = '';
+  } else {
+    actEl.innerHTML = state.idleQuests.map(q => {
+      const remaining = Math.max(0, q.returnAt - now);
+      const hrs = Math.floor(remaining / 3600000);
+      const mins = Math.floor((remaining % 3600000) / 60000);
+      const pct = Math.min(100, Math.round(((now - q.sentAt) / (q.returnAt - q.sentAt)) * 100));
+      return `
+        <div style="background:var(--deep);border:1px solid var(--border);border-radius:8px;padding:8px 12px;margin-bottom:6px">
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px">
+            <span>${q.emoji} ${q.name} is adventuring…</span>
+            <span style="color:var(--muted)">${remaining > 0 ? `${hrs}h ${mins}m left` : 'Returning…'}</span>
+          </div>
+          <div style="height:6px;background:#111;border-radius:3px;overflow:hidden">
+            <div style="height:100%;width:${pct}%;background:var(--purple-l);transition:width 0.3s"></div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+}
+
+function sendOnQuest(charId) {
+  const p = IDLE_PARTY.find(x => x.id === charId);
+  if (!p) return;
+  const hrs = rand(p.minHrs, p.maxHrs);
+  const quest = {
+    charId: p.id, name: p.name, emoji: p.emoji,
+    sentAt: Date.now(), returnAt: Date.now() + hrs * 3600000,
+  };
+  state.idleQuests.push(quest);
+  logEvent(`${p.emoji} ${p.name} set off on a ${hrs}h adventure!`, 'info');
+  renderIdleBoard();
+  saveState();
+}
+
+function resolveIdleQuest(q) {
+  const pool = IDLE_EVENTS[q.charId] || [];
+  if (pool.length === 0) return;
+  const ev = pool[Math.floor(Math.random() * pool.length)];
+  const hrs = Math.max(1, Math.round((q.returnAt - q.sentAt) / 3600000));
+  const xpGain = Array.isArray(ev.xp) ? rand(ev.xp[0], ev.xp[1]) : ev.xp;
+  const hpGain = Array.isArray(ev.hp) ? rand(ev.hp[0], ev.hp[1]) : (ev.hp || 0);
+
+  state.xp += xpGain;
+  if (hpGain > 0) state.hp = Math.min(state.maxHp, state.hp + hpGain);
+
+  const text = ev.text.replace('{h}', hrs).replace('{xp}', xpGain).replace('{hp}', hpGain);
+  logEvent(`${q.emoji} ${text}`, 'good');
+
+  // Level up check
+  const newLevel = Math.floor(state.xp / 100) + 1;
+  if (newLevel > state.level) {
+    state.level = newLevel;
+    state.maxHp = 100 + (state.level - 1) * 10;
+    state.hp = state.maxHp;
+    logEvent(`🌟 LEVEL UP from idle adventures! You are now Level ${state.level} — "${TITLES[Math.min(state.level-1, TITLES.length-1)]}"!`, 'good');
+  }
+}
+
+// Tick the idle board every 30s while the page is open
+setInterval(() => { renderIdleBoard(); renderAll(); }, 30000);
+
+// ── INIT ──────────────────────────────────────────────────
+loadState().then(() => {
+  renderQuestLog();
+  updateStats();
+  renderIdleBoard();
+});
+</script>
+</body>
+</html>
