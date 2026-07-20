@@ -83,6 +83,7 @@
     box-shadow: 0 4px 20px rgba(200,149,42,0.2);
   }
   .header-title {
+    font-family: 'Georgia', serif;
     font-family: 'Nunito', sans-serif;
     font-size: 22px; font-weight: 900;
     color: var(--gold-l);
@@ -120,7 +121,7 @@
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
   }
   .panel-title {
-    font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700;
+    font-family: 'Georgia', serif; font-size: 13px; font-weight: 700;
     color: var(--gold); margin-bottom: 12px; letter-spacing: 0.06em;
     display: flex; align-items: center; gap: 8px;
   }
@@ -185,7 +186,7 @@
   }
   .char-card:hover { border-color: var(--gold); }
   .char-avatar { font-size: 32px; margin-bottom: 6px; }
-  .char-name { font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 700; color: var(--gold); margin-bottom: 2px; }
+  .char-name { font-family: 'Georgia', serif; font-style: italic; font-size: 11px; font-weight: 700; color: var(--gold); margin-bottom: 2px; }
   .char-role { font-size: 12px; color: var(--muted); font-family:'Nunito', sans-serif; }
   .char-power { font-size: 12px; color: var(--green-l); margin-top: 4px; font-style: italic; font-family:'Nunito', sans-serif; }
   .char-badge {
@@ -223,7 +224,7 @@
     padding: 14px 16px; margin: 12px 0; position: relative;
     box-shadow: 0 0 20px rgba(200,149,42,0.15);
   }
-  .dialogue-speaker { font-family: 'Nunito', sans-serif; font-size: 12px; color: var(--gold); margin-bottom: 6px; font-weight: 700; }
+  .dialogue-speaker { font-family: 'Georgia', serif; font-size: 15px; color: var(--gold); margin-bottom: 6px; font-weight: 700; font-style: italic; }
   .dialogue-text { font-size: 13px; color: var(--cream); font-style: italic; line-height: 1.6; font-family: 'Lora', serif; }
   .dialogue-avatar { font-size: 24px; position: absolute; top: -14px; left: 12px; background: var(--deep); padding: 0 4px; }
 
@@ -305,6 +306,11 @@
   }
 
   .glow-gold { text-shadow: 0 0 12px rgba(200,149,42,0.7); }
+  .medieval {
+    font-family: 'Georgia', serif !important;
+    font-style: italic;
+    letter-spacing: 0.03em;
+  }
   .divider { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
   .flex-row { display: flex; gap: 8px; align-items: center; }
   .mt8 { margin-top: 8px; }
@@ -326,8 +332,8 @@
 
 <div class="header">
   <div>
-    <div class="header-sub">⚔️ The Realm of Ketosis</div>
-    <div class="header-title">KETO QUEST</div>
+    <div class="header-sub medieval" style="font-style:italic;font-family:'Georgia',serif">✦ The Realm of Ketosis ✦</div>
+    <div class="header-title medieval">⚔️ Keto Quest</div>
   </div>
   <div style="display:flex;align-items:center;gap:12px">
     <button onclick="toggleTheme()" id="themeBtn" style="
@@ -336,7 +342,7 @@
       transition:all 0.2s;line-height:1;" title="Toggle light/dark mode">🌙</button>
     <div style="text-align:right">
       <div class="level-badge" id="levelBadge">Lv.1</div>
-      <div class="small" style="margin-top:4px" id="heroTitle">Fat Apprentice</div>
+      <div style="margin-top:4px;font-family:'Georgia',serif;font-style:italic;font-size:13px;color:var(--muted)" id="heroTitle">Fat Apprentice</div>
     </div>
   </div>
 </div>
