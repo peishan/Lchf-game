@@ -1809,4 +1809,230 @@ function sendOnQuest(charId) {
 }
 
 function resolveIdleQuest(q) {
-  const 
+  const pool = IDLE_EVENTS[q.charId] || [];
+  if (pool.length === 0) return;
+  const ev = pool[Math.floor(Math.random() * pool.length)];
+  const hrs = Math.max(1, Math.round((q.returnAt - q.sentAt) / 3600000));
+  const xpGain = Array.isArray(ev.xp) ? rand(ev.xp[0], ev.xp[1]) : ev.xp;
+  const hpGain = Array.isArray(ev.hp) ? rand(ev.hp[0], ev.hp[1]) : (ev.hp || 0);
+
+  state.xp += xpGain;
+  if (hpGain > 0) state.hp = Math.min(state.maxHp, state.hp + hpGain);
+
+  const text = ev.text.replace('{h}', hrs).replace('{xp}', xpGain).replace('{hp}', hpGain);
+  logEvent(`${q.emoji} ${text}`, 'good');
+
+  // Level up check
+  const newLevel = Math.floor(state.xp / 100) + 1;
+  if (newLevel > state.level) {
+    state.level = newLevel;
+    state.maxHp = 100 + (state.level - 1) * 10;
+    state.hp = state.maxHp;
+    logEvent(`🌟 LEVEL UP from idle adventures! You are now Level ${state.level} — "${TITLES[Math.min(state.level-1, TITLES.length-1)]}"!`, 'good');
+  }
+}
+
+// Tick the idle board every 30s while the page is open
+setInterval(() => { renderIdleBoard(); renderAll(); }, 30000);
+
+
+// ── REFRESH PREVENTION ────────────────────────────────────
+// Warn before closing/refreshing if unsaved meals exist
+window.addEventListener('beforeunload', e => {
+  if (state.currentMeals && state.currentMeals.length > 0) {
+    e.preventDefault();
+    e.returnValue = "You have unsubmitted meals today! Are you sure you want to leave?";
+    return e.returnValue;
+  }
+});
+
+// Page Visibility API — auto-save when tab goes to background
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') {
+    saveState();
+  }
+  if (document.visibilityState === 'visible') {
+    // Re-resolve any idle quests that completed while away
+    renderIdleBoard();
+    renderAll();
+  }
+});
+
+// Auto-save every 60 seconds as belt-and-suspenders
+setInterval(() => { saveState(); }, 60000);
+
+// ── GITHUB GIST SYNC ──────────────────────────────────────
+function getGistCreds() {
+  const token = document.getElementById('gistToken').value.trim();
+  const gistId = document.getElementById('gistId').value.trim();
+  if (!token) {
+    logEvent('❌ Enter your GitHub Personal Access Token first.', 'bad');
+    return null;
+  }
+  return { token, gistId };
+}
+
+async function uploadToGist() {
+  const creds = getGistCreds(); if (!creds) return;
+  const { token, gistId } = creds;
+  const data = JSON.stringify(state, null, 2);
+  const filename = 'keto-quest-save.json';
+  const body = {
+    description: 'Keto Quest LCHF Game Save — ' + new Date().toLocaleDateString(),
+    public: false,
+    files: { [filename]: { content: data } }
+  };
+  try {
+    logEvent('☁️ Uploading save to GitHub Gist…', 'info');
+    const url = gistId
+      ? `https://api.github.com/gists/${gistId}`
+      : 'https://api.github.com/gists';
+    const method = gistId ? 'PATCH' : 'POST';
+    const res = await fetch(url, {
+      method,
+      headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!res.ok) throw new Error(`GitHub API: ${res.status}`);
+    const json = await res.json();
+    document.getElementById('gistId').value = json.id;
+    // Save token & gist ID to storage for convenience
+    try { await window.storage.set('gist_meta', JSON.stringify({ token, gistId: json.id })); } catch {}
+    document.getElementById('lastSavedLabel').textContent = '✅ Gist saved! ID: ' + json.id;
+    logEvent(`✅ Saved to GitHub Gist! ID: ${json.id} — bookmark this ID to load next time.`, 'good');
+  } catch(err) {
+    logEvent('❌ Gist upload failed: ' + err.message, 'bad');
+  }
+}
+
+async function downloadFromGist() {
+  const creds = getGistCreds(); if (!creds) return;
+  const { token, gistId } = creds;
+  if (!gistId) { logEvent('❌ Enter a Gist ID to load from.', 'bad'); return; }
+  try {
+    logEvent('⬇️ Loading save from GitHub Gist…', 'info');
+    const res = await fetch(`https://api.github.com/gists/${gistId}`, {
+      headers: { 'Authorization': `token ${token}` }
+    });
+    if (!res.ok) throw new Error(`GitHub API: ${res.status}`);
+    const json = await res.json();
+    const file = json.files['keto-quest-save.json'];
+    if (!file) throw new Error('No keto-quest-save.json found in this Gist.');
+    const loaded = JSON.parse(file.content);
+    Object.assign(state, loaded);
+    await saveState();
+    renderAll(); renderQuestLog(); updateStats(); renderIdleBoard();
+    document.getElementById('lastSavedLabel').textContent = '✅ Loaded from Gist at ' + new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    logEvent(`✅ Save loaded from Gist! Welcome back, Level ${state.level} warrior.`, 'good');
+  } catch(err) {
+    logEvent('❌ Gist load failed: ' + err.message, 'bad');
+  }
+}
+
+// Restore saved Gist credentials on load
+async function restoreGistMeta() {
+  try {
+    const r = await window.storage.get('gist_meta');
+    if (r) {
+      const meta = JSON.parse(r.value);
+      if (meta.token) document.getElementById('gistToken').value = meta.token;
+      if (meta.gistId) document.getElementById('gistId').value = meta.gistId;
+    }
+  } catch {}
+}
+
+
+
+// ── SUPPLEMENTS TRACKER ───────────────────────────────────
+const SUPPLEMENTS_LIST = [
+  { id:'vitA',   label:'Vitamin A',          emoji:'🟠' },
+  { id:'vitB',   label:'Vitamin B Complex',  emoji:'🟡' },
+  { id:'vitB12', label:'Vitamin B12',        emoji:'🔵' },
+  { id:'vitC',   label:'Vitamin C',          emoji:'🍊' },
+  { id:'vitD3',  label:'Vitamin D3',         emoji:'☀️' },
+  { id:'vitE',   label:'Vitamin E',          emoji:'🟢' },
+  { id:'vitK2',  label:'Vitamin K2',         emoji:'💚' },
+  { id:'magGly', label:'Magnesium Glycinate',emoji:'💊' },
+  { id:'omega3', label:'Omega-3 Fish Oil',   emoji:'🐟' },
+  { id:'collagen',label:'Collagen Peptides', emoji:'✨' },
+  { id:'biotin', label:'Biotin',             emoji:'💇' },
+  { id:'zinc',   label:'Zinc',               emoji:'⚪' },
+  { id:'iron',   label:'Iron',               emoji:'🔴' },
+  { id:'calcium',label:'Calcium + D3',       emoji:'🦴' },
+  { id:'probio', label:'Probiotics',         emoji:'🦠' },
+  { id:'bragg',  label:'Bragg ACV',          emoji:'🍎' },
+  { id:'electro',label:'Electrolytes',       emoji:'⚡' },
+];
+
+function renderSuppGrid() {
+  if (!state.supps) state.supps = {};
+  const el = document.getElementById('suppGrid');
+  if (!el) return;
+  el.innerHTML = SUPPLEMENTS_LIST.map(s => {
+    const checked = !!state.supps[s.id];
+    return `<label style="display:flex;align-items:center;gap:8px;padding:8px 10px;
+      background:${checked ? 'var(--green-dim)' : 'var(--deep)'};
+      border:1.5px solid ${checked ? 'var(--green-l)' : 'var(--border)'};
+      border-radius:10px;cursor:pointer;transition:all 0.15s;user-select:none"
+      onclick="toggleSupp('${s.id}')">
+      <span style="font-size:18px">${checked ? '✅' : '⬜'}</span>
+      <span style="font-size:13px;font-weight:${checked?'600':'400'};
+        color:${checked?'var(--green-l)':'var(--text)'}">${s.emoji} ${s.label}</span>
+    </label>`;
+  }).join('');
+}
+
+function toggleSupp(id) {
+  if (!state.supps) state.supps = {};
+  state.supps[id] = !state.supps[id];
+  const supp = SUPPLEMENTS_LIST.find(s => s.id === id);
+  if (state.supps[id]) {
+    logEvent(`${supp.emoji} ${supp.label} taken! +1 wellness point.`, 'good');
+  }
+  renderSuppGrid();
+  saveState();
+}
+
+function checkAllSupps() {
+  if (!state.supps) state.supps = {};
+  SUPPLEMENTS_LIST.forEach(s => state.supps[s.id] = true);
+  logEvent('💊 All supplements checked off! Maximum wellness mode.', 'good');
+  renderSuppGrid();
+  saveState();
+}
+
+function clearAllSupps() {
+  state.supps = {};
+  renderSuppGrid();
+  saveState();
+}
+
+// ── LIGHT / DARK THEME TOGGLE ──────────────────────────────
+function toggleTheme() {
+  const isLight = document.documentElement.classList.toggle('light');
+  document.getElementById('themeBtn').textContent = isLight ? '☀️' : '🌙';
+  try { window.storage.set('keto_theme', isLight ? 'light' : 'dark'); } catch {}
+}
+
+async function restoreTheme() {
+  try {
+    const r = await window.storage.get('keto_theme');
+    if (r && r.value === 'light') {
+      document.documentElement.classList.add('light');
+      document.getElementById('themeBtn').textContent = '☀️';
+    }
+  } catch {}
+}
+
+// ── INIT ──────────────────────────────────────────────────
+restoreTheme();
+loadState().then(() => {
+  renderQuestLog();
+  updateStats();
+  renderIdleBoard();
+  restoreGistMeta();
+  renderSuppGrid();
+});
+</script>
+</body>
+</html>
