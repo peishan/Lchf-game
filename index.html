@@ -68,7 +68,7 @@
   body {
     background: var(--night);
     color: var(--text);
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Nunito', sans-serif;
     min-height: 100vh;
     background-image: radial-gradient(ellipse at 20% 20%, #1a1040 0%, transparent 50%),
                       radial-gradient(ellipse at 80% 80%, #0a1a10 0%, transparent 50%);
@@ -83,7 +83,7 @@
     box-shadow: 0 4px 20px rgba(200,149,42,0.2);
   }
   .header-title {
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Nunito', sans-serif;
     font-size: 22px; font-weight: 900;
     color: var(--gold-l);
     letter-spacing: 0.04em;
@@ -93,7 +93,7 @@
 
   /* ── TABS ── */
   .tabs { display: flex; gap: 4px; padding: 12px 16px; background: var(--deep); border-bottom: 1px solid var(--border); overflow-x: auto; }
-  .tab { padding: 7px 14px; border-radius: 8px; border: 1px solid var(--border); font-family: 'Roboto', sans-serif;
+  .tab { padding: 7px 14px; border-radius: 8px; border: 1px solid var(--border); font-family: 'Nunito', sans-serif;
     font-size: 11px; cursor: pointer; background: var(--panel); color: var(--muted); white-space: nowrap;
     transition: all 0.15s; letter-spacing: 0.05em; }
   .tab.active { background: var(--gold); color: #000; border-color: var(--gold-l); font-weight: 700; }
@@ -120,25 +120,25 @@
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
   }
   .panel-title {
-    font-family: 'Roboto', sans-serif; font-size: 13px; font-weight: 700;
+    font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700;
     color: var(--gold); margin-bottom: 12px; letter-spacing: 0.06em;
     display: flex; align-items: center; gap: 8px;
   }
 
   /* ── STAT BARS ── */
   .stat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-  .stat-label { width: 80px; font-size: 13px; color: var(--muted); letter-spacing: 0.02em; flex-shrink: 0; font-family:'Roboto', sans-serif; font-weight:500; }
+  .stat-label { width: 80px; font-size: 13px; color: var(--muted); letter-spacing: 0.02em; flex-shrink: 0; font-family:'Nunito', sans-serif; font-weight:500; }
   .stat-bar-wrap { flex: 1; height: 14px; background: var(--deep); border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
   .stat-bar { height: 100%; border-radius: 10px; transition: width 0.4s ease; }
-  .stat-val { width: 60px; font-size: 14px; color: var(--cream); text-align: right; font-variant-numeric: tabular-nums; font-family: 'Roboto', sans-serif; font-weight:700; }
+  .stat-val { width: 60px; font-size: 14px; color: var(--cream); text-align: right; font-variant-numeric: tabular-nums; font-family: 'Nunito', sans-serif; font-weight:700; }
 
   /* ── HP / XP BARS ── */
   .hero-bars { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
   .hbar { background: var(--deep); border: 1px solid var(--border); border-radius: 12px; padding: 8px 12px; }
-  .hbar-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; font-family:'Roboto', sans-serif; font-weight:600; }
+  .hbar-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; font-family:'Nunito', sans-serif; font-weight:600; }
   .hbar-track { height: 12px; background: #111; border-radius: 8px; overflow: hidden; }
   .hbar-fill { height: 100%; border-radius: 8px; transition: width 0.5s; }
-  .hbar-val { font-size: 13px; color: var(--cream); margin-top: 3px; font-variant-numeric: tabular-nums; font-family: 'Roboto', sans-serif; font-weight:700; }
+  .hbar-val { font-size: 13px; color: var(--cream); margin-top: 3px; font-variant-numeric: tabular-nums; font-family: 'Nunito', sans-serif; font-weight:700; }
 
   /* ── MACROS SUMMARY ── */
   .macro-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px; }
@@ -146,25 +146,25 @@
     background: var(--deep); border: 1px solid var(--border); border-radius: 12px;
     padding: 8px; text-align: center;
   }
-  .macro-card .mc-val { font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums; font-family: 'Roboto', sans-serif; }
-  .macro-card .mc-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; font-family:'Roboto', sans-serif; font-weight:600; }
+  .macro-card .mc-val { font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums; font-family: 'Nunito', sans-serif; }
+  .macro-card .mc-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; font-family:'Nunito', sans-serif; font-weight:600; }
 
   /* ── INPUTS ── */
   input[type=text], input[type=number], select, textarea {
     background: var(--deep); border: 1.5px solid var(--border); border-radius: 10px;
-    color: var(--cream); font-family: 'Roboto', sans-serif; font-size: 14px;
+    color: var(--cream); font-family: 'Nunito', sans-serif; font-size: 14px;
     padding: 8px 12px; outline: none; width: 100%;
     transition: border-color 0.15s;
   }
   input:focus, select:focus, textarea:focus { border-color: var(--gold); }
-  .field-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; font-family:'Roboto', sans-serif; font-weight:600; }
+  .field-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; font-family:'Nunito', sans-serif; font-weight:600; }
   .field { margin-bottom: 10px; }
   .field-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
 
   /* ── BUTTONS ── */
   .btn {
     padding: 10px 18px; border: none; border-radius: 12px; cursor: pointer;
-    font-family: 'Roboto', sans-serif; font-size: 12px; font-weight: 700;
+    font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 700;
     letter-spacing: 0.06em; transition: all 0.15s;
   }
   .btn-gold { background: var(--gold); color: #000; }
@@ -185,13 +185,13 @@
   }
   .char-card:hover { border-color: var(--gold); }
   .char-avatar { font-size: 32px; margin-bottom: 6px; }
-  .char-name { font-family: 'Roboto', sans-serif; font-size: 11px; font-weight: 700; color: var(--gold); margin-bottom: 2px; }
-  .char-role { font-size: 12px; color: var(--muted); font-family:'Roboto', sans-serif; }
-  .char-power { font-size: 12px; color: var(--green-l); margin-top: 4px; font-style: italic; font-family:'Roboto', sans-serif; }
+  .char-name { font-family: 'Nunito', sans-serif; font-size: 11px; font-weight: 700; color: var(--gold); margin-bottom: 2px; }
+  .char-role { font-size: 12px; color: var(--muted); font-family:'Nunito', sans-serif; }
+  .char-power { font-size: 12px; color: var(--green-l); margin-top: 4px; font-style: italic; font-family:'Nunito', sans-serif; }
   .char-badge {
     position: absolute; top: 6px; right: 6px;
     background: var(--purple); color: #fff; font-size: 9px;
-    padding: 2px 5px; border-radius: 4px; font-family: 'Roboto', sans-serif;
+    padding: 2px 5px; border-radius: 4px; font-family: 'Nunito', sans-serif;
     letter-spacing: 0.04em;
   }
 
@@ -200,8 +200,8 @@
     background: var(--deep); border: 1px solid var(--border); border-radius: 12px;
     padding: 10px 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: flex-start;
   }
-  .meal-name { font-size: 13px; color: var(--cream); margin-bottom: 4px; font-family: 'Roboto', sans-serif; font-weight: 600; }
-  .meal-macros { display: flex; gap: 10px; font-size: 13px; font-family: 'Roboto', sans-serif; font-weight:700; }
+  .meal-name { font-size: 13px; color: var(--cream); margin-bottom: 4px; font-family: 'Nunito', sans-serif; font-weight: 600; }
+  .meal-macros { display: flex; gap: 10px; font-size: 13px; font-family: 'Nunito', sans-serif; font-weight:700; }
   .meal-macros span { display: flex; align-items: center; gap: 3px; }
   .rm-btn { background: none; border: none; color: var(--red-l); cursor: pointer; font-size: 18px; line-height: 1; padding: 0 2px; }
 
@@ -210,9 +210,9 @@
     border-left: 3px solid var(--gold); padding: 8px 12px; margin-bottom: 8px;
     background: var(--deep); border-radius: 0 8px 8px 0;
   }
-  .quest-date { font-size: 13px; color: var(--muted); margin-bottom: 3px; font-family:'Roboto', sans-serif; font-weight:500; }
-  .quest-result { font-size: 14px; font-family:'Roboto', sans-serif; }
-  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-family: 'Roboto', sans-serif; letter-spacing: 0.04em; margin-left: 6px; }
+  .quest-date { font-size: 13px; color: var(--muted); margin-bottom: 3px; font-family:'Nunito', sans-serif; font-weight:500; }
+  .quest-result { font-size: 14px; font-family:'Nunito', sans-serif; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-family: 'Nunito', sans-serif; letter-spacing: 0.04em; margin-left: 6px; }
   .badge-win { background: var(--green-dim); color: var(--green-l); border: 1px solid var(--green); }
   .badge-loss { background: #2a1018; color: var(--red-l); border: 1px solid var(--red); }
   .badge-ok { background: #2a2010; color: var(--gold); border: 1px solid var(--gold); }
@@ -223,20 +223,20 @@
     padding: 14px 16px; margin: 12px 0; position: relative;
     box-shadow: 0 0 20px rgba(200,149,42,0.15);
   }
-  .dialogue-speaker { font-family: 'Roboto', sans-serif; font-size: 12px; color: var(--gold); margin-bottom: 6px; font-weight: 700; }
+  .dialogue-speaker { font-family: 'Nunito', sans-serif; font-size: 12px; color: var(--gold); margin-bottom: 6px; font-weight: 700; }
   .dialogue-text { font-size: 13px; color: var(--cream); font-style: italic; line-height: 1.6; font-family: 'Lora', serif; }
   .dialogue-avatar { font-size: 24px; position: absolute; top: -14px; left: 12px; background: var(--deep); padding: 0 4px; }
 
   /* ── CARB METER ── */
   .carb-meter { margin: 10px 0; }
-  .carb-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-bottom: 5px; font-family:'Roboto', sans-serif; font-weight:500; }
+  .carb-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-bottom: 5px; font-family:'Nunito', sans-serif; font-weight:500; }
   .carb-track { height: 20px; background: var(--deep); border-radius: 10px; border: 1px solid var(--border); overflow: hidden; }
   .carb-fill { height: 100%; border-radius: 10px; transition: width 0.5s, background 0.3s; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; font-size: 11px; font-weight: 700; color: #fff; }
 
   /* ── SCROLL DECORATION ── */
   .scroll-header {
     text-align: center; padding: 10px;
-    font-family: 'Roboto', sans-serif; font-size: 11px; color: var(--muted);
+    font-family: 'Nunito', sans-serif; font-size: 11px; color: var(--muted);
     letter-spacing: 0.12em; text-transform: uppercase;
     border-bottom: 1px solid var(--border); margin-bottom: 14px;
   }
@@ -256,7 +256,7 @@
   .ev-info { color: var(--blue-l); }
 
   /* ── TOOLTIP ── */
-  .tip { font-size: 13px; color: var(--muted); font-style: italic; margin-top: 4px; font-family:'Roboto', sans-serif; }
+  .tip { font-size: 13px; color: var(--muted); font-style: italic; margin-top: 4px; font-family:'Nunito', sans-serif; }
 
   /* ── RESPONSIVE ── */
   /* ── MOBILE FIRST ── */
@@ -308,7 +308,7 @@
   .divider { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
   .flex-row { display: flex; gap: 8px; align-items: center; }
   .mt8 { margin-top: 8px; }
-  .small { font-size: 13px; color: var(--muted); font-family:'Roboto', sans-serif; }
+  .small { font-size: 13px; color: var(--muted); font-family:'Nunito', sans-serif; }
 
   /* Stars */
   .stars { color: var(--gold); letter-spacing: 2px; }
@@ -316,7 +316,7 @@
   /* Level badge */
   .level-badge {
     background: linear-gradient(135deg, var(--gold), var(--gold-l));
-    color: #000; font-family: 'Roboto', sans-serif; font-weight: 900;
+    color: #000; font-family: 'Nunito', sans-serif; font-weight: 900;
     font-size: 13px; padding: 4px 12px; border-radius: 20px;
     display: inline-block;
   }
@@ -350,7 +350,7 @@
 
   <!-- Save/Load Bar -->
   <div id="saveBar" style="background:var(--deep);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-    <span style="font-size:11px;color:var(--muted);font-family: 'Roboto', sans-serif;font-style:italic;flex-shrink:0">💾 SAVE DATA</span>
+    <span style="font-size:11px;color:var(--muted);font-family: 'Nunito', sans-serif;font-style:italic;flex-shrink:0">💾 SAVE DATA</span>
     <button class="btn btn-gold" style="padding:6px 14px;font-size:11px" onclick="exportSave()">⬇️ Export Save File</button>
     <label class="btn btn-ghost" style="padding:6px 14px;font-size:11px;cursor:pointer">
       ⬆️ Import Save File
@@ -358,8 +358,8 @@
     </label>
     <span style="font-size:11px;color:var(--muted)" id="lastSavedLabel">Auto-saves to browser storage</span>
     <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-left:auto">
-      <input id="gistToken" type="password" placeholder="GitHub Token" style="background:var(--deep);border:1px solid var(--border);border-radius:8px;color:var(--cream);font-size:13px;padding:7px 10px;width:140px;outline:none;font-family:'Roboto', sans-serif"/>
-      <input id="gistId" type="text" placeholder="Gist ID (optional)" style="background:var(--deep);border:1px solid var(--border);border-radius:8px;color:var(--cream);font-size:13px;padding:7px 10px;width:150px;outline:none;font-family:'Roboto', sans-serif"/>
+      <input id="gistToken" type="password" placeholder="GitHub Token" style="background:var(--deep);border:1px solid var(--border);border-radius:8px;color:var(--cream);font-size:13px;padding:7px 10px;width:140px;outline:none;font-family:'Nunito', sans-serif"/>
+      <input id="gistId" type="text" placeholder="Gist ID (optional)" style="background:var(--deep);border:1px solid var(--border);border-radius:8px;color:var(--cream);font-size:13px;padding:7px 10px;width:150px;outline:none;font-family:'Nunito', sans-serif"/>
       <button class="btn btn-green" style="padding:7px 14px;font-size:13px" onclick="uploadToGist()">☁️ Save to Gist</button>
       <button class="btn btn-ghost" style="padding:7px 14px;font-size:13px" onclick="downloadFromGist()">⬇️ Load from Gist</button>
     </div>
@@ -442,10 +442,10 @@
     <div class="panel">
       <div class="panel-title">📚 Quick-Add — Common LCHF Foods</div>
       <div class="tip" style="margin-bottom:10px">Tap any food to auto-fill the meal form. Mix and match!</div>
-      <div id="foodLibrary" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+      <div id="foodLibrary" style="display:block"></div>
       <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px">
         <div class="field-label" style="width:100%;margin-bottom:4px">🥗 Build a combo — selected items:</div>
-        <div id="comboList" style="font-size:12px;color:var(--cream);width:100%;min-height:20px"></div>
+        <div id="comboList" style="font-size:15px;color:var(--cream);width:100%;min-height:20px"></div>
         <button class="btn btn-green" style="margin-top:6px" onclick="addComboMeal()">➕ Add Combo as One Meal</button>
         <button class="btn btn-ghost" style="margin-top:6px" onclick="clearCombo()">✕ Clear</button>
       </div>
@@ -1373,24 +1373,7 @@ const FOODS = [
   { name:"Dried Shiitake, rehydrated (50g)", cat:"🍄 Mushrooms & Fungus", fat:0.3, protein:1.5, carbs:5, emoji:"🍄" },
   { name:"Canned Mushrooms, drained (100g)", cat:"🍄 Mushrooms & Fungus", fat:0.2, protein:2, carbs:2.5, emoji:"🍄" },
   { name:"Mixed Mushrooms stir-fried (100g)", cat:"🍄 Mushrooms & Fungus", fat:3, protein:3, carbs:3.5, emoji:"🍄" },
-  // Supplements
-  { name:"Bragg Apple Cider Vinegar (1 tbsp)", cat:"💊 Supplements", fat:0, protein:0, carbs:0.1, emoji:"🍎" },
-  { name:"Vitamin A (1 capsule)", cat:"💊 Supplements", fat:0, protein:0, carbs:0, emoji:"💊" },
-  { name:"Vitamin B Complex (1 tablet)", cat:"💊 Supplements", fat:0, protein:0, carbs:0.2, emoji:"💊" },
-  { name:"Vitamin B12 (1 tablet)", cat:"💊 Supplements", fat:0, protein:0, carbs:0, emoji:"💊" },
-  { name:"Vitamin C (1 tablet 500mg)", cat:"💊 Supplements", fat:0, protein:0, carbs:0.3, emoji:"🍊" },
-  { name:"Vitamin D3 (1 softgel)", cat:"💊 Supplements", fat:0.5, protein:0, carbs:0, emoji:"☀️" },
-  { name:"Vitamin E (1 capsule)", cat:"💊 Supplements", fat:0.5, protein:0, carbs:0, emoji:"💊" },
-  { name:"Vitamin K2 (1 capsule)", cat:"💊 Supplements", fat:0, protein:0, carbs:0, emoji:"💊" },
-  { name:"Magnesium Glycinate (2 capsules)", cat:"💊 Supplements", fat:0, protein:0, carbs:0.5, emoji:"💊" },
-  { name:"Omega-3 Fish Oil (1 softgel)", cat:"💊 Supplements", fat:1, protein:0, carbs:0, emoji:"🐟" },
-  { name:"Collagen Peptides (1 scoop ~10g)", cat:"💊 Supplements", fat:0, protein:9, carbs:0.1, emoji:"✨" },
-  { name:"Biotin (1 tablet)", cat:"💊 Supplements", fat:0, protein:0, carbs:0, emoji:"💊" },
-  { name:"Zinc (1 tablet)", cat:"💊 Supplements", fat:0, protein:0, carbs:0, emoji:"💊" },
-  { name:"Iron (1 tablet)", cat:"💊 Supplements", fat:0, protein:0, carbs:0, emoji:"💊" },
-  { name:"Calcium + Vitamin D (1 tablet)", cat:"💊 Supplements", fat:0, protein:0, carbs:0.5, emoji:"💊" },
-  { name:"Electrolyte Powder, no sugar (1 sachet)", cat:"💊 Supplements", fat:0, protein:0, carbs:1, emoji:"⚡" },
-  { name:"Probiotics (1 capsule)", cat:"💊 Supplements", fat:0, protein:0, carbs:0.2, emoji:"🦠" },
+
 
   // Fats & Extras
   { name:"Coconut Oil, Virgin (1 tbsp)", cat:"🫒 Fats & Extras", fat:14, protein:0, carbs:0, emoji:"🥥" },
@@ -1472,46 +1455,12 @@ const FOODS = [
   { name:"Generic Peanut Butter (2 tbsp ~32g)", cat:"🥜 Nut Butters", fat:16, protein:7, carbs:7, emoji:"🥜" },
   { name:"Almond Butter (1 tbsp)", cat:"🥜 Nut Butters", fat:9, protein:2.4, carbs:1.5, emoji:"🥜" },
   // Supplements
-  { name:"Bragg ACV (1 tbsp)", cat:"💊 Supplements", fat:0, protein:0, carbs:0.1, emoji:"🍎" },
-  { name:"Bragg ACV (2 tbsp, with water)", cat:"💊 Supplements", fat:0, protein:0, carbs:0.2, emoji:"🍎" },
-  { name:"Vitamin A (1 capsule)", cat:"💊 Supplements", fat:0, protein:0, carbs:0, emoji:"💊" },
-  { name:"Vitamin B Complex (1 tablet)", cat:"💊 Supplements", fat:0, protein:0, carbs:0, emoji:"💊" },
-  { name:"Vitamin C (1 tablet 500mg)", cat:"💊 Supplements", fat:0, protein:0, carbs:0.1, emoji:"🍊" },
-  { name:"Vitamin D3 (1 capsule)", cat:"💊 Supplements", fat:0, protein:0, carbs:0, emoji:"☀️" },
-  { name:"Vitamin E (1 capsule)", cat:"💊 Supplements", fat:0, protein:0, carbs:0, emoji:"💊" },
-  { name:"Vitamin K2 (1 capsule)", cat:"💊 Supplements", fat:0, protein:0, carbs:0, emoji:"💊" },
-  { name:"Magnesium Glycinate (1 capsule)", cat:"💊 Supplements", fat:0, protein:0, carbs:0, emoji:"💊" },
-  { name:"Collagen Peptides (1 scoop ~10g)", cat:"💊 Supplements", fat:0, protein:9, carbs:0, emoji:"✨" },
-  { name:"Biotin (1 tablet)", cat:"💊 Supplements", fat:0, protein:0, carbs:0, emoji:"💊" },
-  { name:"Omega-3 Fish Oil (1 capsule)", cat:"💊 Supplements", fat:1, protein:0, carbs:0, emoji:"🐟" },
-  { name:"Zinc (1 tablet)", cat:"💊 Supplements", fat:0, protein:0, carbs:0, emoji:"💊" },
-  { name:"Iron (1 tablet)", cat:"💊 Supplements", fat:0, protein:0, carbs:0, emoji:"💊" },
-  { name:"Calcium + D3 (1 tablet)", cat:"💊 Supplements", fat:0, protein:0, carbs:0, emoji:"💊" },
-  { name:"Probiotic (1 capsule)", cat:"💊 Supplements", fat:0, protein:0, carbs:0, emoji:"🦠" },
-  { name:"Electrolyte Powder, no sugar (1 sachet)", cat:"💊 Supplements", fat:0, protein:0, carbs:1, emoji:"⚡" },
-  { name:"Ginkgo Biloba (1 tablet)", cat:"💊 Supplements", fat:0, protein:0, carbs:0, emoji:"🍃" },
   { name:"Lakanto Creamy Peanut Butter (1 tbsp ~16g)", cat:"🥜 Nut Butters", fat:6.3, protein:3.6, carbs:2, emoji:"🥜" },
   { name:"Lakanto Creamy Peanut Butter (2 tbsp ~32g)", cat:"🥜 Nut Butters", fat:12.6, protein:7.2, carbs:4, emoji:"🥜" },
   { name:"Generic Peanut Butter, natural (1 tbsp)", cat:"🥜 Nut Butters", fat:8, protein:3.5, carbs:3, emoji:"🥜" },
   { name:"Generic Peanut Butter, natural (2 tbsp)", cat:"🥜 Nut Butters", fat:16, protein:7, carbs:6, emoji:"🥜" },
   { name:"Almond Butter (1 tbsp)", cat:"🥜 Nut Butters", fat:9, protein:3.4, carbs:1.5, emoji:"🥜" },
   // Supplements
-  { name:"Bragg Apple Cider Vinegar (1 tbsp)", cat:"💊 Supplements", fat:0, protein:0, carbs:0.1, emoji:"🍎" },
-  { name:"Vitamin A (1 capsule)", cat:"💊 Supplements", fat:0, protein:0, carbs:0, emoji:"💊" },
-  { name:"Vitamin B Complex (1 tablet)", cat:"💊 Supplements", fat:0, protein:0, carbs:0.2, emoji:"💊" },
-  { name:"Vitamin B12 (1 tablet)", cat:"💊 Supplements", fat:0, protein:0, carbs:0, emoji:"💊" },
-  { name:"Vitamin C (1 tablet 500mg)", cat:"💊 Supplements", fat:0, protein:0, carbs:0.3, emoji:"🍊" },
-  { name:"Vitamin D3 (1 softgel)", cat:"💊 Supplements", fat:0.5, protein:0, carbs:0, emoji:"☀️" },
-  { name:"Vitamin E (1 capsule)", cat:"💊 Supplements", fat:0.5, protein:0, carbs:0, emoji:"💊" },
-  { name:"Vitamin K2 (1 capsule)", cat:"💊 Supplements", fat:0, protein:0, carbs:0, emoji:"💊" },
-  { name:"Magnesium Glycinate (2 capsules)", cat:"💊 Supplements", fat:0, protein:0, carbs:0.5, emoji:"💊" },
-  { name:"Omega-3 Fish Oil (1 softgel)", cat:"💊 Supplements", fat:1, protein:0, carbs:0, emoji:"🐟" },
-  { name:"Collagen Peptides (1 scoop ~10g)", cat:"💊 Supplements", fat:0, protein:9, carbs:0, emoji:"✨" },
-  { name:"Biotin (1 tablet)", cat:"💊 Supplements", fat:0, protein:0, carbs:0, emoji:"💊" },
-  { name:"Zinc (1 tablet)", cat:"💊 Supplements", fat:0, protein:0, carbs:0, emoji:"💊" },
-  { name:"Iron (1 tablet)", cat:"💊 Supplements", fat:0, protein:0, carbs:0.1, emoji:"💊" },
-  { name:"Electrolyte Powder (1 sachet)", cat:"💊 Supplements", fat:0, protein:0, carbs:1, emoji:"⚡" },
-  { name:"Probiotics (1 capsule)", cat:"💊 Supplements", fat:0, protein:0, carbs:0.5, emoji:"🦠" },
   // Drinks
   { name:"Lemon Tea, unsweetened (1 cup)", cat:"☕ Drinks", fat:0, protein:0, carbs:1.5, emoji:"🍋" },
   { name:"Lemon Tea, sweetened (1 cup)", cat:"☕ Drinks", fat:0, protein:0, carbs:18, emoji:"🍋" },
@@ -1614,13 +1563,13 @@ function renderFoodLibrary() {
   const el = document.getElementById('foodLibrary');
   let html = '';
   cats.forEach(cat => {
-    html += `<div style="width:100%;font-size:11px;color:var(--gold);font-family: 'Roboto', sans-serif;font-style:italic;margin-top:8px;margin-bottom:3px">${cat}</div>`;
+    html += `<div style="width:100%;font-size:11px;color:var(--gold);font-family: 'Nunito', sans-serif;font-style:italic;margin-top:8px;margin-bottom:3px">${cat}</div>`;
     FOODS.filter(f=>f.cat===cat).forEach((f,i) => {
       const idx = FOODS.indexOf(f);
       html += `<button onclick="quickAdd(${idx})" style="
         background:var(--deep);border:1px solid var(--border);border-radius:20px;
         color:var(--cream);font-size:12px;padding:5px 10px;cursor:pointer;
-        font-family: 'Roboto', sans-serif;transition:all 0.15s;white-space:nowrap;
+        font-family: 'Nunito', sans-serif;transition:all 0.15s;white-space:nowrap;
         " onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
         ${f.emoji} ${f.name}
       </button>`;
@@ -1765,7 +1714,7 @@ function renderIdleBoard() {
       <button onclick="sendOnQuest('${p.id}')" style="
         background:var(--deep);border:1px solid var(--border);border-radius:20px;
         color:var(--cream);font-size:12px;padding:6px 12px;cursor:pointer;
-        font-family: 'Roboto', sans-serif;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
+        font-family: 'Nunito', sans-serif;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--border)'">
         ${p.emoji} Send ${p.name}
       </button>`).join('');
   }
